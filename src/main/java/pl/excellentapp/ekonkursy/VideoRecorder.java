@@ -168,12 +168,58 @@ public class VideoRecorder {
     private void addThankYouScreen(FFmpegFrameRecorder recorder, int frameRate, Set<String> thankYouNames) throws IOException {
         ThankYouScreenGenerator generator = new ThankYouScreenGenerator();
         File thankYouImage = generator.generateThankYouScreen(thankYouNames);
-        if (thankYouImage.exists()) {
-            try (OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage()) {
-                Mat img = opencv_imgcodecs.imread(thankYouImage.getAbsolutePath());
-                Frame frame = converter.convert(img);
-                for (int j = 0; j < frameRate * 3; j++) {
-                    recorder.record(frame);
+        if (!thankYouImage.exists()) {
+            return;
+        }
+        try (OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+             FFmpegFrameGrabber subscribeGrabber = new FFmpegFrameGrabber(VideoConfig.SUBSCRIBE_FILE)) {
+            subscribeGrabber.start();
+
+            try (Mat thankYouMat = opencv_imgcodecs.imread(thankYouImage.getAbsolutePath())) {
+                int thankYouWidth = thankYouMat.cols();
+                int thankYouHeight = thankYouMat.rows();
+
+                Frame subscribeFrame;
+                Mat lastSubscribeFrame = null;
+                List<Mat> subscribeFrames = new ArrayList<>();
+
+                while ((subscribeFrame = subscribeGrabber.grabImage()) != null) {
+                    lastSubscribeFrame = converter.convertToMat(subscribeFrame).clone();
+                    subscribeFrames.add(lastSubscribeFrame);
+                }
+                subscribeGrabber.stop();
+
+                if (lastSubscribeFrame == null) {
+                    throw new IOException("Nie udało się odczytać filmu subscribe.mp4.");
+                }
+
+                double scale = (double) thankYouWidth / lastSubscribeFrame.cols();
+                int subscribeHeight = (int) (lastSubscribeFrame.rows() * scale);
+
+                int yOffset = thankYouHeight - subscribeHeight;
+
+                int subscribeFrameIndex = 0;
+                int totalFrames = frameRate * 3;
+
+                for (int j = 0; j < totalFrames; j++) {
+                    Mat combinedMat = thankYouMat.clone();
+
+                    Mat subscribeMat;
+                    if (!subscribeFrames.isEmpty()) {
+                        subscribeMat = subscribeFrames.get(subscribeFrameIndex % subscribeFrames.size()).clone();
+                    } else {
+                        subscribeMat = lastSubscribeFrame.clone();
+                    }
+
+                    Mat resizedSubscribeMat = new Mat();
+                    opencv_imgproc.resize(subscribeMat, resizedSubscribeMat, new Size(thankYouWidth, subscribeHeight));
+
+                    resizedSubscribeMat.copyTo(combinedMat.rowRange(yOffset, yOffset + subscribeHeight).colRange(0, thankYouWidth));
+
+                    Frame finalFrame = converter.convert(combinedMat);
+                    recorder.record(finalFrame);
+
+                    subscribeFrameIndex++;
                 }
             }
         }

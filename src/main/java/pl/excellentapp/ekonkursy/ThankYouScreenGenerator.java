@@ -35,7 +35,7 @@ public class ThankYouScreenGenerator {
         this.backgroundColor = selectedColors[1];
         this.textColor = selectedColors[0];
 
-        BufferedImage image = new BufferedImage(VideoConfig.WIDTH, VideoConfig.HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(VideoConfig.WIDTH, VideoConfig.HEIGHT - 200, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -44,10 +44,13 @@ public class ThankYouScreenGenerator {
         drawBackground(g);
 
         Font titleFont = loadCustomFont(FONT_TITLE_PATH, TITLE_FONT_SIZE);
-
         g.setFont(titleFont);
         g.setColor(textColor);
-        drawCenteredText(g, "Podziękowania dla:", VideoConfig.WIDTH / 2, 120);
+
+        int namesStartY = getNamesStartY(g, names);
+        int titleY = namesStartY - 100;
+
+        drawCenteredText(g, "Podziękowania dla:", VideoConfig.WIDTH / 2, titleY);
 
         drawNames(g, names);
 
@@ -64,6 +67,13 @@ public class ThankYouScreenGenerator {
         return outputFile;
     }
 
+    private int getNamesStartY(Graphics2D g, Set<String> names) {
+        FontMetrics metrics = g.getFontMetrics();
+        int lineHeight = metrics.getHeight();
+        int totalHeight = names.size() * lineHeight;
+        return (VideoConfig.HEIGHT - 200) / 2 - (totalHeight / 2);
+    }
+
     private void drawBackground(Graphics2D g) {
         g.setColor(backgroundColor);
         g.fillRect(0, 0, VideoConfig.WIDTH, VideoConfig.HEIGHT);
@@ -75,7 +85,7 @@ public class ThankYouScreenGenerator {
         Set<Rectangle> occupiedAreas = new HashSet<>();
 
         int centerX = VideoConfig.WIDTH / 2;
-        int centerY = VideoConfig.HEIGHT / 2;
+        int centerY = (VideoConfig.HEIGHT - 200) / 2;
 
         double angle = 0;
         double radius = 0;

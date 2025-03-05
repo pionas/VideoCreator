@@ -10,6 +10,7 @@ final class VideoConfig {
     public static final String EKONKURSY_API_URL = "https://www.e-konkursy.info";
     public static final String OUTPUT_FILE = "output.mp4";
     public static final String WELCOME_FILE = "./movies/welcome.mp4";
+    public static final String SUBSCRIBE_FILE = "./movies/subscribe.mp4";
     public static final String WELCOME_IMAGE_FILE = "./e-KonkursyInfo.jpg";
     public static final String EFFECT_FILE = "./movies/effect.mp4";
     public static final int WIDTH = 1080;
