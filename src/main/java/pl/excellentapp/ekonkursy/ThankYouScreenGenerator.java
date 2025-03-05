@@ -1,0 +1,141 @@
+package pl.excellentapp.ekonkursy;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import static pl.excellentapp.ekonkursy.VideoCreatorFacade.IMAGE_DIRECTORY;
+
+public class ThankYouScreenGenerator {
+
+    private static final int WIDTH = 1920;
+    private static final int HEIGHT = 1080;
+
+    private static final String FONT_TITLE_PATH = "./fonts/BebasNeue-Regular.ttf";
+    private static final String FONT_NAMES_PATH = "./fonts/Lato-Regular.ttf";
+    private static final String FONT_NAMES_BOLD_PATH = "./fonts/Lato-Bold.ttf";
+
+    private static final int TITLE_FONT_SIZE = 80;
+    private static final int NAMES_FONT_SIZE = 40;
+    public static final Random RANDOM = new Random();
+
+    private Color backgroundColor;
+    private Color textColor;
+
+    public File generateThankYouScreen(Set<String> names) {
+        Color[] selectedColors = TextColorConfig.TEXT_COLORS.get(RANDOM.nextInt(TextColorConfig.TEXT_COLORS.size()));
+        boolean firstColorForThanksMessage = RANDOM.nextBoolean();
+        this.backgroundColor = (firstColorForThanksMessage) ? selectedColors[0] : selectedColors[1];
+        this.textColor = (firstColorForThanksMessage) ? selectedColors[1] : selectedColors[0];
+
+        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = image.createGraphics();
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
+        drawGradientBackground(g);
+
+        Font titleFont = loadCustomFont(FONT_TITLE_PATH, TITLE_FONT_SIZE);
+        Font nameFont = loadCustomFont(FONT_NAMES_PATH, NAMES_FONT_SIZE);
+        Font nameFontBold = loadCustomFont(FONT_NAMES_BOLD_PATH, NAMES_FONT_SIZE);
+
+        g.setFont(titleFont);
+        g.setColor(textColor);
+        drawCenteredText(g, "Podziękowania dla:", WIDTH / 2, 120);
+
+        Set<Rectangle> occupiedAreas = new HashSet<>();
+
+        int centerX = WIDTH / 2;
+        int centerY = HEIGHT / 2;
+
+        List<String> sortedNames = new ArrayList<>(names);
+        int totalNames = sortedNames.size();
+        double angleStep = 360.0 / totalNames;
+
+        int minRadius = 100;
+        int maxRadius = Math.min(WIDTH, HEIGHT) / 2 - 50;
+
+        int branchFactor = Math.max(1, totalNames / 8);
+
+        for (int i = 0; i < totalNames; i++) {
+            String name = sortedNames.get(i);
+            int branch = i / branchFactor;
+
+            double baseAngle = Math.toRadians(branch * angleStep);
+            double angleVariation = Math.toRadians(RANDOM.nextDouble() * 15 - 7.5);
+            double angle = baseAngle + angleVariation;
+
+            int radius = minRadius + (i % branchFactor) * (maxRadius / branchFactor);
+            int x = (int) (centerX + radius * Math.cos(angle));
+            int y = (int) (centerY + radius * Math.sin(angle));
+
+            g.setFont(RANDOM.nextBoolean() ? nameFont : nameFontBold);
+            g.setColor(textColor);
+
+            FontMetrics metrics = g.getFontMetrics();
+            int textWidth = metrics.stringWidth(name);
+            int textHeight = metrics.getHeight();
+
+            Rectangle textRect = new Rectangle(x - textWidth / 2, y - textHeight, textWidth, textHeight);
+            boolean collision = occupiedAreas.stream().anyMatch(existing -> existing.intersects(textRect));
+
+            if (!collision && x > 50 && x + textWidth < WIDTH - 50 && y > 200 && y < HEIGHT - 50) {
+                drawOutlinedText(g, name, x, y);
+                occupiedAreas.add(textRect);
+            }
+        }
+
+        g.dispose();
+
+        String outputPath = String.format("./%s/thank_you.png", IMAGE_DIRECTORY);
+        File outputFile = new File(outputPath);
+        try {
+            ImageIO.write(image, "png", outputFile);
+        } catch (IOException e) {
+            System.err.println("Błąd zapisu obrazu: " + e.getMessage());
+        }
+
+        return outputFile;
+    }
+
+    private void drawGradientBackground(Graphics2D g) {
+        GradientPaint gradient = new GradientPaint(0, 0, backgroundColor, WIDTH, HEIGHT, backgroundColor.darker());
+        g.setPaint(gradient);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    private void drawOutlinedText(Graphics2D g, String text, int x, int y) {
+        g.setColor(Color.BLACK);
+        g.drawString(text, x + 2, y + 2);
+        g.drawString(text, x - 2, y - 2);
+        g.setColor(textColor);
+        g.drawString(text, x, y);
+    }
+
+    private void drawCenteredText(Graphics2D g, String text, int x, int y) {
+        FontMetrics metrics = g.getFontMetrics();
+        int textWidth = metrics.stringWidth(text);
+        g.drawString(text, x - textWidth / 2, y);
+    }
+
+    private Font loadCustomFont(String fontPath, int size) {
+        try {
+            File fontFile = new File(fontPath);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont((float) size);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(font);
+            return font;
+        } catch (Exception e) {
+            System.err.println("Błąd ładowania czcionki: " + e.getMessage());
+            return new Font("Arial", Font.BOLD, size);
+        }
+    }
+}
