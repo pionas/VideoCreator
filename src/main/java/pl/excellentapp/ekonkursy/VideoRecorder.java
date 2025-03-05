@@ -132,12 +132,14 @@ public class VideoRecorder {
             int effectHeight = lastEffectImg.rows();
             int topMargin = VideoConfig.MARGIN_TOP;
             int bottomMargin = VideoConfig.MARGIN_BOTTOM;
+            int sideMargin = 10;
+            int availableWidth = effectWidth - (2 * sideMargin);
             int availableHeight = effectHeight - (topMargin + bottomMargin);
             int index = 0;
             for (Article article : articles) {
                 Mat articleImg = opencv_imgcodecs.imread(article.getImageFile().getAbsolutePath());
 
-                double scale = Math.min((double) effectWidth / articleImg.cols(), (double) availableHeight / articleImg.rows());
+                double scale = Math.min((double) availableWidth / articleImg.cols(), (double) availableHeight / articleImg.rows());
                 int newWidth = (int) (articleImg.cols() * scale);
                 int newHeight = (int) (articleImg.rows() * scale);
 
@@ -152,7 +154,7 @@ public class VideoRecorder {
                         combined = lastEffectImg.clone();
                     }
 
-                    int xOffset = (effectWidth - newWidth) / 2;
+                    int xOffset = sideMargin + (availableWidth - newWidth) / 2;
                     int yOffset = topMargin + (availableHeight - newHeight) / 2;
 
                     resizedArticleImg.copyTo(combined.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
