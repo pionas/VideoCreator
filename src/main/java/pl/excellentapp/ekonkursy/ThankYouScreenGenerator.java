@@ -32,9 +32,8 @@ public class ThankYouScreenGenerator {
 
     public File generateThankYouScreen(Set<String> names) {
         Color[] selectedColors = TextColorConfig.TEXT_COLORS.get(RANDOM.nextInt(TextColorConfig.TEXT_COLORS.size()));
-        boolean firstColorForThanksMessage = RANDOM.nextBoolean();
-        this.backgroundColor = firstColorForThanksMessage ? selectedColors[0] : selectedColors[1];
-        this.textColor = firstColorForThanksMessage ? selectedColors[1] : selectedColors[0];
+        this.backgroundColor = selectedColors[1];
+        this.textColor = selectedColors[0];
 
         BufferedImage image = new BufferedImage(VideoConfig.WIDTH, VideoConfig.HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();

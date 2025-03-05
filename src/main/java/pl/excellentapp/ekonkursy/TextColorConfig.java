@@ -3,7 +3,7 @@ package pl.excellentapp.ekonkursy;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,7 +20,7 @@ final class TextColorConfig {
 //            new Color[]{new Color(0x88B934), new Color(0x000000)},
 //            new Color[]{new Color(0x52B06D), new Color(0x000000)},
 //            new Color[]{new Color(0x27AA83), new Color(0x000000)},
-            new Color[]{new Color(0xB25E1A), new Color(0xFFFFFF)},
+//            new Color[]{new Color(0xB25E1A), new Color(0xFFFFFF)},
 //            new Color[]{new Color(0xC6A91C), new Color(0x000000)},
 //            new Color[]{new Color(0x88B934), new Color(0x000000)},
 //            new Color[]{new Color(0x7BBF8D), new Color(0x000000)},
@@ -40,12 +40,13 @@ final class TextColorConfig {
 //            new Color[]{new Color(0xB8D497), new Color(0x000000)},
 //            new Color[]{new Color(0x9ECFA9), new Color(0x000000)},
 //            new Color[]{new Color(0x90CBB4), new Color(0x000000)},
-            new Color[]{new Color(0xA43D70), new Color(0xFFFFFF)},
+//            new Color[]{new Color(0xA43D70), new Color(0xFFFFFF)},
 //            new Color[]{new Color(0xD16798), new Color(0x000000)},
 //            new Color[]{new Color(0x88B934), new Color(0x000000)},
 //            new Color[]{new Color(0x3C81D1), new Color(0x000000)},
-            new Color[]{new Color(0x225BA6), new Color(0xFFFFFF)},
-            new Color[]{new Color(0x5037A6), new Color(0xFFFFFF)}
+//            new Color[]{new Color(0x225BA6), new Color(0xFFFFFF)},
+            new Color[]{new Color(0x5037A6), new Color(0xFFFFFF)},
+            new Color[]{new Color(0x330CB6), new Color(0xFFFFFF)}
 //            new Color[]{new Color(0x8362D8), new Color(0x000000)},
 //            new Color[]{new Color(0xB8D497), new Color(0x000000)},
 //            new Color[]{new Color(0x88B934), new Color(0x000000)},

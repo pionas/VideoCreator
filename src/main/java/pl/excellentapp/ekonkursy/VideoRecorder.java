@@ -10,11 +10,14 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.models.Article;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -26,9 +29,10 @@ public class VideoRecorder {
         try (FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputFile, width, height)) {
             setupRecorder(recorder, frameRate);
 
+            addWelcomeScreen(recorder, frameRate);
 //            addWelcomeScreen(recorder, VideoConfig.WELCOME_FILE, width, height);
 
-            recordFrames(recorder, articles);
+            recordFrames(recorder, articles, frameRate);
 
             addThankYouScreen(recorder, frameRate, thankYouNames);
             System.out.println("Film zapisany jako " + outputFile);
@@ -106,43 +110,56 @@ public class VideoRecorder {
         }
     }
 
-    private void recordFrames(FFmpegFrameRecorder recorder, List<Article> articles) throws IOException {
+    private void recordFrames(FFmpegFrameRecorder recorder, List<Article> articles, int frameRate) throws IOException {
         try (OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage()) {
+            Mat lastEffectImg = null;
+            List<Mat> effectMats = new ArrayList<>();
+            try (FFmpegFrameGrabber effectGrabber = new FFmpegFrameGrabber(VideoConfig.EFFECT_FILE)) {
+                effectGrabber.start();
+                Frame effectFrame;
+                while ((effectFrame = effectGrabber.grabImage()) != null) {
+                    lastEffectImg = converter.convertToMat(effectFrame).clone();
+                    effectMats.add(lastEffectImg);
+                }
+                effectGrabber.stop();
+            }
+
+            if (lastEffectImg == null) {
+                throw new IOException("Nie udało się odczytać efektu wideo.");
+            }
+
+            int effectWidth = lastEffectImg.cols();
+            int effectHeight = lastEffectImg.rows();
+            int topMargin = VideoConfig.MARGIN_TOP;
+            int bottomMargin = VideoConfig.MARGIN_BOTTOM;
+            int availableHeight = effectHeight - (topMargin + bottomMargin);
+            int index = 0;
             for (Article article : articles) {
                 Mat articleImg = opencv_imgcodecs.imread(article.getImageFile().getAbsolutePath());
 
-                try (FFmpegFrameGrabber effectGrabber = new FFmpegFrameGrabber(VideoConfig.EFFECT_FILE)) {
-                    effectGrabber.start();
+                double scale = Math.min((double) effectWidth / articleImg.cols(), (double) availableHeight / articleImg.rows());
+                int newWidth = (int) (articleImg.cols() * scale);
+                int newHeight = (int) (articleImg.rows() * scale);
 
-                    Frame effectFrame;
-                    while ((effectFrame = effectGrabber.grabImage()) != null) {
-                        Mat effectImg = converter.convertToMat(effectFrame);
+                Mat resizedArticleImg = new Mat();
+                opencv_imgproc.resize(articleImg, resizedArticleImg, new Size(newWidth, newHeight));
 
-                        int effectWidth = effectImg.cols();
-                        int effectHeight = effectImg.rows();
-
-                        int topMargin = 430;
-                        int bottomMargin = 480;
-                        int availableHeight = effectHeight - (topMargin + bottomMargin);
-
-                        double scale = Math.min((double) effectWidth / articleImg.cols(), (double) availableHeight / articleImg.rows());
-                        int newWidth = (int) (articleImg.cols() * scale);
-                        int newHeight = (int) (articleImg.rows() * scale);
-
-                        Mat resizedArticleImg = new Mat();
-                        opencv_imgproc.resize(articleImg, resizedArticleImg, new Size(newWidth, newHeight));
-
-                        Mat combined = effectImg.clone();
-                        int xOffset = (effectWidth - newWidth) / 2;
-                        int yOffset = topMargin + (availableHeight - newHeight) / 2;
-
-                        resizedArticleImg.copyTo(combined.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
-
-                        Frame finalFrame = converter.convert(combined);
-                        recorder.record(finalFrame);
+                for (int j = 0; j < frameRate; j++) {
+                    Mat combined;
+                    if (effectMats.size() > index) {
+                        combined = effectMats.get(index).clone();
+                    } else {
+                        combined = lastEffectImg.clone();
                     }
 
-                    effectGrabber.stop();
+                    int xOffset = (effectWidth - newWidth) / 2;
+                    int yOffset = topMargin + (availableHeight - newHeight) / 2;
+
+                    resizedArticleImg.copyTo(combined.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
+
+                    Frame finalFrame = converter.convert(combined);
+                    recorder.record(finalFrame);
+                    index++;
                 }
             }
         }
@@ -161,4 +178,40 @@ public class VideoRecorder {
             }
         }
     }
+
+    private void addWelcomeScreen(FFmpegFrameRecorder recorder, int frameRate) throws IOException {
+        File logo = new File(VideoConfig.WELCOME_IMAGE_FILE);
+        if (logo.exists()) {
+            try (OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage()) {
+                Mat img = opencv_imgcodecs.imread(logo.getAbsolutePath());
+
+                int imgWidth = img.cols();
+                int imgHeight = img.rows();
+
+                int videoWidth = recorder.getImageWidth();
+                int videoHeight = recorder.getImageHeight();
+
+                double scale = Math.min((double) videoWidth / imgWidth, (double) videoHeight / imgHeight);
+                int newWidth = (int) (imgWidth * scale);
+                int newHeight = (int) (imgHeight * scale);
+
+                Mat resizedImg = new Mat();
+                opencv_imgproc.resize(img, resizedImg, new Size(newWidth, newHeight));
+
+                Mat frameMat = new Mat(videoHeight, videoWidth, img.type(), new Scalar(255, 255, 255, 255));
+
+                int xOffset = (videoWidth - newWidth) / 2;
+                int yOffset = (videoHeight - newHeight) / 2;
+
+                Mat roi = frameMat.apply(new Rect(xOffset, yOffset, newWidth, newHeight));
+                resizedImg.copyTo(roi);
+
+                Frame frame = converter.convert(frameMat);
+                for (int j = 0; j < frameRate * 1.5; j++) {
+                    recorder.record(frame);
+                }
+            }
+        }
+    }
+
 }

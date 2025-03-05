@@ -69,9 +69,9 @@ public class VideoCreatorFacade {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile() && file.delete()) {
-                    System.out.println("Usunięto plik: " + file.getAbsolutePath());
+//                    System.out.println("Usunięto plik: " + file.getAbsolutePath());
                 } else {
-                    System.err.println("Nie udało się usunąć pliku: " + file.getAbsolutePath());
+//                    System.err.println("Nie udało się usunąć pliku: " + file.getAbsolutePath());
                 }
             }
         }
