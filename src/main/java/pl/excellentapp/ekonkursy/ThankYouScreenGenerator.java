@@ -1,7 +1,13 @@
 package pl.excellentapp.ekonkursy;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -90,16 +96,14 @@ public class ThankYouScreenGenerator {
                 int x = (int) (centerX + radius * Math.cos(angle));
                 int y = (int) (centerY + radius * Math.sin(angle));
 
-                g.setFont(RANDOM.nextBoolean() ? nameFont : nameFontBold);
-                g.setColor(textColor);
-
-                FontMetrics metrics = g.getFontMetrics();
-                int textWidth = metrics.stringWidth(name);
-                int textHeight = metrics.getHeight();
+                Font fontToUse = RANDOM.nextBoolean() ? nameFont : nameFontBold;
+                BufferedImage textImage = renderText(name, fontToUse, textColor);
+                int textWidth = textImage.getWidth();
+                int textHeight = textImage.getHeight();
 
                 Rectangle textRect = new Rectangle(
                         x - textWidth / 2 - buffer,
-                        y - textHeight - buffer,
+                        y - textHeight / 2 - buffer,
                         textWidth + buffer * 2,
                         textHeight + buffer * 2
                 );
@@ -107,7 +111,7 @@ public class ThankYouScreenGenerator {
                 boolean collision = occupiedAreas.stream().anyMatch(existing -> existing.intersects(textRect));
 
                 if (!collision) {
-                    drawRotatedText(g, name, x, y);
+                    g.drawImage(textImage, x - textWidth / 2, y - textHeight / 2, null);
                     occupiedAreas.add(textRect);
                     placed = true;
                 }
@@ -119,12 +123,25 @@ public class ThankYouScreenGenerator {
         }
     }
 
-    private void drawRotatedText(Graphics2D g, String text, int x, int y) {
-        double rotation = (RANDOM.nextDouble() - 0.5) * Math.PI / 8;
-        AffineTransform originalTransform = g.getTransform();
-        g.rotate(rotation, x, y);
-        g.drawString(text, x, y);
-        g.setTransform(originalTransform);
+    private BufferedImage renderText(String text, Font font, Color color) {
+        BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = tempImage.createGraphics();
+        g2d.setFont(font);
+        FontMetrics fm = g2d.getFontMetrics();
+        int width = fm.stringWidth(text);
+        int height = fm.getHeight();
+        g2d.dispose();
+
+        BufferedImage textImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        g2d = textImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        g2d.setFont(font);
+        g2d.setColor(color);
+        g2d.drawString(text, 0, fm.getAscent());
+        g2d.dispose();
+
+        return textImage;
     }
 
     private void drawCenteredText(Graphics2D g, String text, int x, int y) {
