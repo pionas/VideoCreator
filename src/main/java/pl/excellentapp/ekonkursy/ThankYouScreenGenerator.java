@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -97,7 +96,9 @@ public class ThankYouScreenGenerator {
                 int y = (int) (centerY + radius * Math.sin(angle));
 
                 Font fontToUse = RANDOM.nextBoolean() ? nameFont : nameFontBold;
-                BufferedImage textImage = renderText(name, fontToUse, textColor);
+                double rotationAngle = (RANDOM.nextDouble() - 0.5) * Math.PI / 4;
+
+                BufferedImage textImage = renderTextWithRotation(name, fontToUse, textColor, rotationAngle);
                 int textWidth = textImage.getWidth();
                 int textHeight = textImage.getHeight();
 
@@ -123,7 +124,7 @@ public class ThankYouScreenGenerator {
         }
     }
 
-    private BufferedImage renderText(String text, Font font, Color color) {
+    private BufferedImage renderTextWithRotation(String text, Font font, Color color, double rotationAngle) {
         BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = tempImage.createGraphics();
         g2d.setFont(font);
@@ -132,13 +133,22 @@ public class ThankYouScreenGenerator {
         int height = fm.getHeight();
         g2d.dispose();
 
-        BufferedImage textImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int imgSize = (int) Math.sqrt(width * width + height * height);
+        BufferedImage textImage = new BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB);
         g2d = textImage.createGraphics();
+
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
         g2d.setFont(font);
         g2d.setColor(color);
-        g2d.drawString(text, 0, fm.getAscent());
+
+        int centerX = imgSize / 2;
+        int centerY = imgSize / 2;
+
+        g2d.translate(centerX, centerY);
+        g2d.rotate(rotationAngle);
+        g2d.drawString(text, -width / 2, fm.getAscent() - height / 2);
         g2d.dispose();
 
         return textImage;
