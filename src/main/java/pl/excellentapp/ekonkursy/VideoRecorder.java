@@ -136,6 +136,7 @@ public class VideoRecorder {
             int availableWidth = effectWidth - (2 * sideMargin);
             int availableHeight = effectHeight - (topMargin + bottomMargin);
             int index = 0;
+            int delayFrames = 20;
             for (Article article : articles) {
                 Mat articleImg = opencv_imgcodecs.imread(article.getImageFile().getAbsolutePath());
 
@@ -145,6 +146,19 @@ public class VideoRecorder {
 
                 Mat resizedArticleImg = new Mat();
                 opencv_imgproc.resize(articleImg, resizedArticleImg, new Size(newWidth, newHeight));
+
+                for (int j = 0; j < delayFrames; j++) {
+                    Mat effectOnlyFrame;
+                    if (effectMats.size() > index) {
+                        effectOnlyFrame = effectMats.get(index).clone();
+                    } else {
+                        effectOnlyFrame = lastEffectImg.clone();
+                    }
+
+                    Frame finalFrame = converter.convert(effectOnlyFrame);
+                    recorder.record(finalFrame);
+                    index++;
+                }
 
                 for (int j = 0; j < frameRate; j++) {
                     Mat combined;
