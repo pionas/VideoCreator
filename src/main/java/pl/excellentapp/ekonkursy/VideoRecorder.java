@@ -56,7 +56,7 @@ public class VideoRecorder {
         recorder.start();
     }
 
-    private void addWelcomeScreen(FFmpegFrameRecorder recorder, String welcomeFilePath, int targetWidth, int targetHeight) throws IOException {
+    private void addWelcomeScreen(FFmpegFrameRecorder recorder, String welcomeFilePath, int targetWidth, int targetHeight) {
         File welcomeFile = new File(welcomeFilePath);
         if (!welcomeFile.exists()) {
             System.err.println("Plik powitalny nie istnieje: " + welcomeFilePath);
@@ -77,7 +77,6 @@ public class VideoRecorder {
             double aspectRatio = (double) originalWidth / originalHeight;
             int newWidth, newHeight;
 
-            // Dopasowanie do targetWidth i targetHeight przy zachowaniu proporcji
             if (targetWidth / (double) targetHeight > aspectRatio) {
                 newHeight = targetHeight;
                 newWidth = (int) (targetHeight * aspectRatio);
