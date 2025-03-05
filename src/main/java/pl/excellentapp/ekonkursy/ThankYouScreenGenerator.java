@@ -2,6 +2,7 @@ package pl.excellentapp.ekonkursy;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -42,49 +43,12 @@ public class ThankYouScreenGenerator {
         drawBackground(g);
 
         Font titleFont = loadCustomFont(FONT_TITLE_PATH, TITLE_FONT_SIZE);
-        Font nameFont = loadCustomFont(FONT_NAMES_PATH, NAMES_FONT_SIZE);
-        Font nameFontBold = loadCustomFont(FONT_NAMES_BOLD_PATH, NAMES_FONT_SIZE);
 
         g.setFont(titleFont);
         g.setColor(textColor);
         drawCenteredText(g, "Podziękowania dla:", WIDTH / 2, 120);
 
-        Set<Rectangle> occupiedAreas = new HashSet<>();
-
-        int centerX = WIDTH / 2;
-        int centerY = HEIGHT / 2;
-        int minRadius = 50;
-        int maxRadius = Math.min(WIDTH, HEIGHT) / 2 - 50;
-
-        for (String name : names) {
-            int attempts = 0;
-            boolean placed = false;
-
-            while (attempts < 100 && !placed) {
-                double angle = RANDOM.nextDouble() * 2 * Math.PI;
-                int radius = minRadius + RANDOM.nextInt(maxRadius - minRadius);
-                int x = (int) (centerX + radius * Math.cos(angle));
-                int y = (int) (centerY + radius * Math.sin(angle));
-
-                g.setFont(RANDOM.nextBoolean() ? nameFont : nameFontBold);
-                g.setColor(textColor);
-
-                FontMetrics metrics = g.getFontMetrics();
-                int textWidth = metrics.stringWidth(name);
-                int textHeight = metrics.getHeight();
-
-                Rectangle textRect = new Rectangle(x - textWidth / 2, y - textHeight, textWidth, textHeight);
-
-                boolean collision = occupiedAreas.stream().anyMatch(existing -> existing.intersects(textRect));
-
-                if (!collision) {
-                    drawText(g, name, x, y);
-                    occupiedAreas.add(textRect);
-                    placed = true;
-                }
-                attempts++;
-            }
-        }
+        drawNames(g, names);
 
         g.dispose();
 
@@ -104,9 +68,57 @@ public class ThankYouScreenGenerator {
         g.fillRect(0, 0, WIDTH, HEIGHT);
     }
 
-    private void drawText(Graphics2D g, String text, int x, int y) {
-        g.setColor(textColor);
+    private void drawNames(Graphics2D g, Set<String> names) {
+        Font nameFont = loadCustomFont(FONT_NAMES_PATH, NAMES_FONT_SIZE);
+        Font nameFontBold = loadCustomFont(FONT_NAMES_BOLD_PATH, NAMES_FONT_SIZE);
+        Set<Rectangle> occupiedAreas = new HashSet<>();
+
+        int centerX = WIDTH / 2;
+        int centerY = HEIGHT / 2;
+
+        double angle = 0;
+        double radius = 0;
+        double angleStep = Math.PI / 10;
+        double radiusStep = 20;
+
+        for (String name : names) {
+            boolean placed = false;
+            int attempts = 0;
+
+            while (!placed && attempts < 500) {
+                int x = (int) (centerX + radius * Math.cos(angle));
+                int y = (int) (centerY + radius * Math.sin(angle));
+
+                g.setFont(RANDOM.nextBoolean() ? nameFont : nameFontBold);
+                g.setColor(textColor);
+
+                FontMetrics metrics = g.getFontMetrics();
+                int textWidth = metrics.stringWidth(name);
+                int textHeight = metrics.getHeight();
+
+                Rectangle textRect = new Rectangle(x - textWidth / 2, y - textHeight, textWidth, textHeight);
+
+                boolean collision = occupiedAreas.stream().anyMatch(existing -> existing.intersects(textRect));
+
+                if (!collision) {
+                    drawRotatedText(g, name, x, y);
+                    occupiedAreas.add(textRect);
+                    placed = true;
+                }
+
+                angle += angleStep;
+                radius += radiusStep / angle;
+                attempts++;
+            }
+        }
+    }
+
+    private void drawRotatedText(Graphics2D g, String text, int x, int y) {
+        double rotation = (RANDOM.nextDouble() - 0.5) * Math.PI / 8;
+        AffineTransform originalTransform = g.getTransform();
+        g.rotate(rotation, x, y);
         g.drawString(text, x, y);
+        g.setTransform(originalTransform);
     }
 
     private void drawCenteredText(Graphics2D g, String text, int x, int y) {
