@@ -4,14 +4,13 @@ import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Rect;
-import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
 
 import java.io.File;
 
-public class ImageProcessor {
+import static pl.excellentapp.ekonkursy.VideoConfig.BACKGROUND_COLOR;
 
-    private static final Scalar BACKGROUND_COLOR = new Scalar(255, 255, 255, 255);
+public class ImageProcessor {
 
     public File processImage(File imageFile, int maxWidth, int maxHeight) {
         if (imageFile == null || !imageFile.exists() || !isValidImage(imageFile)) {
