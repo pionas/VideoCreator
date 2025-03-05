@@ -19,9 +19,6 @@ import static pl.excellentapp.ekonkursy.VideoCreatorFacade.IMAGE_DIRECTORY;
 
 public class ThankYouScreenGenerator {
 
-    private static final int WIDTH = 1920;
-    private static final int HEIGHT = 1080;
-
     private static final String FONT_TITLE_PATH = "./fonts/BebasNeue-Regular.ttf";
     private static final String FONT_NAMES_PATH = "./fonts/Lato-Regular.ttf";
     private static final String FONT_NAMES_BOLD_PATH = "./fonts/Lato-Bold.ttf";
@@ -39,7 +36,7 @@ public class ThankYouScreenGenerator {
         this.backgroundColor = firstColorForThanksMessage ? selectedColors[0] : selectedColors[1];
         this.textColor = firstColorForThanksMessage ? selectedColors[1] : selectedColors[0];
 
-        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(VideoConfig.WIDTH, VideoConfig.HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -51,7 +48,7 @@ public class ThankYouScreenGenerator {
 
         g.setFont(titleFont);
         g.setColor(textColor);
-        drawCenteredText(g, "Podziękowania dla:", WIDTH / 2, 120);
+        drawCenteredText(g, "Podziękowania dla:", VideoConfig.WIDTH / 2, 120);
 
         drawNames(g, names);
 
@@ -70,7 +67,7 @@ public class ThankYouScreenGenerator {
 
     private void drawBackground(Graphics2D g) {
         g.setColor(backgroundColor);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        g.fillRect(0, 0, VideoConfig.WIDTH, VideoConfig.HEIGHT);
     }
 
     private void drawNames(Graphics2D g, Set<String> names) {
@@ -78,8 +75,8 @@ public class ThankYouScreenGenerator {
         Font nameFontBold = loadCustomFont(FONT_NAMES_BOLD_PATH, NAMES_FONT_SIZE);
         Set<Rectangle> occupiedAreas = new HashSet<>();
 
-        int centerX = WIDTH / 2;
-        int centerY = HEIGHT / 2;
+        int centerX = VideoConfig.WIDTH / 2;
+        int centerY = VideoConfig.HEIGHT / 2;
 
         double angle = 0;
         double radius = 0;
