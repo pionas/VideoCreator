@@ -6,7 +6,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -71,15 +70,17 @@ public class ThankYouScreenGenerator {
     private void drawNames(Graphics2D g, Set<String> names) {
         Font nameFont = loadCustomFont(FONT_NAMES_PATH, NAMES_FONT_SIZE);
         Font nameFontBold = loadCustomFont(FONT_NAMES_BOLD_PATH, NAMES_FONT_SIZE);
-        Set<Rectangle> occupiedAreas = new HashSet<>();
 
+        boolean[][] occupiedPixels = new boolean[WIDTH][HEIGHT]; // Mapa zajętych pikseli
         int centerX = WIDTH / 2;
         int centerY = HEIGHT / 2;
 
         double angle = 0;
         double radius = 0;
-        double angleStep = Math.PI / 10;
-        double radiusStep = 20;
+        double angleStep = Math.PI / 6;
+        double radiusStep = 30;
+
+        int buffer = 10; // Zapewnia dodatkowy margines wokół tekstu
 
         for (String name : names) {
             boolean placed = false;
@@ -96,19 +97,39 @@ public class ThankYouScreenGenerator {
                 int textWidth = metrics.stringWidth(name);
                 int textHeight = metrics.getHeight();
 
-                Rectangle textRect = new Rectangle(x - textWidth / 2, y - textHeight, textWidth, textHeight);
+                int startX = x - textWidth / 2 - buffer;
+                int startY = y - textHeight - buffer;
+                int endX = x + textWidth / 2 + buffer;
+                int endY = y + buffer;
 
-                boolean collision = occupiedAreas.stream().anyMatch(existing -> existing.intersects(textRect));
-
-                if (!collision) {
+                if (isAreaFree(occupiedPixels, startX, startY, endX, endY)) {
                     drawRotatedText(g, name, x, y);
-                    occupiedAreas.add(textRect);
+                    markAreaAsOccupied(occupiedPixels, startX, startY, endX, endY);
                     placed = true;
                 }
 
                 angle += angleStep;
                 radius += radiusStep / angle;
                 attempts++;
+            }
+        }
+    }
+
+    private boolean isAreaFree(boolean[][] occupiedPixels, int startX, int startY, int endX, int endY) {
+        for (int i = Math.max(0, startX); i < Math.min(WIDTH, endX); i++) {
+            for (int j = Math.max(0, startY); j < Math.min(HEIGHT, endY); j++) {
+                if (occupiedPixels[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void markAreaAsOccupied(boolean[][] occupiedPixels, int startX, int startY, int endX, int endY) {
+        for (int i = Math.max(0, startX); i < Math.min(WIDTH, endX); i++) {
+            for (int j = Math.max(0, startY); j < Math.min(HEIGHT, endY); j++) {
+                occupiedPixels[i][j] = true;
             }
         }
     }
