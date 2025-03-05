@@ -5,9 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -32,8 +30,8 @@ public class ThankYouScreenGenerator {
     public File generateThankYouScreen(Set<String> names) {
         Color[] selectedColors = TextColorConfig.TEXT_COLORS.get(RANDOM.nextInt(TextColorConfig.TEXT_COLORS.size()));
         boolean firstColorForThanksMessage = RANDOM.nextBoolean();
-        this.backgroundColor = (firstColorForThanksMessage) ? selectedColors[0] : selectedColors[1];
-        this.textColor = (firstColorForThanksMessage) ? selectedColors[1] : selectedColors[0];
+        this.backgroundColor = firstColorForThanksMessage ? selectedColors[0] : selectedColors[1];
+        this.textColor = firstColorForThanksMessage ? selectedColors[1] : selectedColors[0];
 
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
@@ -41,7 +39,7 @@ public class ThankYouScreenGenerator {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-        drawGradientBackground(g);
+        drawBackground(g);
 
         Font titleFont = loadCustomFont(FONT_TITLE_PATH, TITLE_FONT_SIZE);
         Font nameFont = loadCustomFont(FONT_NAMES_PATH, NAMES_FONT_SIZE);
@@ -55,41 +53,36 @@ public class ThankYouScreenGenerator {
 
         int centerX = WIDTH / 2;
         int centerY = HEIGHT / 2;
-
-        List<String> sortedNames = new ArrayList<>(names);
-        int totalNames = sortedNames.size();
-        double angleStep = 360.0 / totalNames;
-
-        int minRadius = 100;
+        int minRadius = 50;
         int maxRadius = Math.min(WIDTH, HEIGHT) / 2 - 50;
 
-        int branchFactor = Math.max(1, totalNames / 8);
+        for (String name : names) {
+            int attempts = 0;
+            boolean placed = false;
 
-        for (int i = 0; i < totalNames; i++) {
-            String name = sortedNames.get(i);
-            int branch = i / branchFactor;
+            while (attempts < 100 && !placed) {
+                double angle = RANDOM.nextDouble() * 2 * Math.PI;
+                int radius = minRadius + RANDOM.nextInt(maxRadius - minRadius);
+                int x = (int) (centerX + radius * Math.cos(angle));
+                int y = (int) (centerY + radius * Math.sin(angle));
 
-            double baseAngle = Math.toRadians(branch * angleStep);
-            double angleVariation = Math.toRadians(RANDOM.nextDouble() * 15 - 7.5);
-            double angle = baseAngle + angleVariation;
+                g.setFont(RANDOM.nextBoolean() ? nameFont : nameFontBold);
+                g.setColor(textColor);
 
-            int radius = minRadius + (i % branchFactor) * (maxRadius / branchFactor);
-            int x = (int) (centerX + radius * Math.cos(angle));
-            int y = (int) (centerY + radius * Math.sin(angle));
+                FontMetrics metrics = g.getFontMetrics();
+                int textWidth = metrics.stringWidth(name);
+                int textHeight = metrics.getHeight();
 
-            g.setFont(RANDOM.nextBoolean() ? nameFont : nameFontBold);
-            g.setColor(textColor);
+                Rectangle textRect = new Rectangle(x - textWidth / 2, y - textHeight, textWidth, textHeight);
 
-            FontMetrics metrics = g.getFontMetrics();
-            int textWidth = metrics.stringWidth(name);
-            int textHeight = metrics.getHeight();
+                boolean collision = occupiedAreas.stream().anyMatch(existing -> existing.intersects(textRect));
 
-            Rectangle textRect = new Rectangle(x - textWidth / 2, y - textHeight, textWidth, textHeight);
-            boolean collision = occupiedAreas.stream().anyMatch(existing -> existing.intersects(textRect));
-
-            if (!collision && x > 50 && x + textWidth < WIDTH - 50 && y > 200 && y < HEIGHT - 50) {
-                drawOutlinedText(g, name, x, y);
-                occupiedAreas.add(textRect);
+                if (!collision) {
+                    drawText(g, name, x, y);
+                    occupiedAreas.add(textRect);
+                    placed = true;
+                }
+                attempts++;
             }
         }
 
@@ -106,16 +99,12 @@ public class ThankYouScreenGenerator {
         return outputFile;
     }
 
-    private void drawGradientBackground(Graphics2D g) {
-        GradientPaint gradient = new GradientPaint(0, 0, backgroundColor, WIDTH, HEIGHT, backgroundColor.darker());
-        g.setPaint(gradient);
+    private void drawBackground(Graphics2D g) {
+        g.setColor(backgroundColor);
         g.fillRect(0, 0, WIDTH, HEIGHT);
     }
 
-    private void drawOutlinedText(Graphics2D g, String text, int x, int y) {
-        g.setColor(Color.BLACK);
-        g.drawString(text, x + 2, y + 2);
-        g.drawString(text, x - 2, y - 2);
+    private void drawText(Graphics2D g, String text, int x, int y) {
         g.setColor(textColor);
         g.drawString(text, x, y);
     }
