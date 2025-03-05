@@ -8,8 +8,6 @@ import org.bytedeco.opencv.opencv_core.Size;
 
 import java.io.File;
 
-import static pl.excellentapp.ekonkursy.VideoConfig.BACKGROUND_COLOR;
-
 public class ImageProcessor {
 
     public File processImage(File imageFile, int maxWidth, int maxHeight) {
@@ -28,7 +26,7 @@ public class ImageProcessor {
         String outputPath = imageFile.getParent() + File.separator + "processed_" + imageFile.getName();
         opencv_imgcodecs.imwrite(outputPath, finalImage);
 
-        return new File(outputPath);
+        return imageFile;
     }
 
     private boolean isValidImage(File imageFile) {
@@ -57,7 +55,7 @@ public class ImageProcessor {
     }
 
     private Mat addPadding(Mat img, int finalWidth, int finalHeight) {
-        Mat canvas = new Mat(finalHeight, finalWidth, img.type(), BACKGROUND_COLOR);
+        Mat canvas = new Mat(finalHeight, finalWidth, img.type(), VideoConfig.BACKGROUND_COLOR_WHITE);
         int xOffset = (finalWidth - img.cols()) / 2;
         int yOffset = (finalHeight - img.rows()) / 2;
 

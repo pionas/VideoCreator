@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static pl.excellentapp.ekonkursy.VideoConfig.BACKGROUND_COLOR;
-import static pl.excellentapp.ekonkursy.VideoConfig.WELCOME_FILE;
-
 public class VideoRecorder {
 
     public void recordVideo(List<Article> articles, String outputFile, int width, int height, int frameRate, Set<String> thankYouNames) {
@@ -29,9 +26,9 @@ public class VideoRecorder {
         try (FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputFile, width, height)) {
             setupRecorder(recorder, frameRate);
 
-            addWelcomeScreen(recorder, WELCOME_FILE, width, height);
+//            addWelcomeScreen(recorder, VideoConfig.WELCOME_FILE, width, height);
 
-            recordFrames(recorder, articles, frameRate);
+            recordFrames(recorder, articles);
 
             addThankYouScreen(recorder, frameRate, thankYouNames);
             System.out.println("Film zapisany jako " + outputFile);
@@ -92,7 +89,7 @@ public class VideoRecorder {
                     Mat resizedMat = new Mat();
                     opencv_imgproc.resize(originalMat, resizedMat, new Size(newWidth, newHeight), 0, 0, opencv_imgproc.INTER_AREA);
 
-                    Mat finalMat = new Mat(targetHeight, targetWidth, originalMat.type(), BACKGROUND_COLOR);
+                    Mat finalMat = new Mat(targetHeight, targetWidth, originalMat.type(), VideoConfig.BACKGROUND_COLOR_WHITE);
                     int xOffset = (targetWidth - newWidth) / 2;
                     int yOffset = (targetHeight - newHeight) / 2;
                     resizedMat.copyTo(finalMat.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
@@ -109,13 +106,43 @@ public class VideoRecorder {
         }
     }
 
-    private void recordFrames(FFmpegFrameRecorder recorder, List<Article> articles, int frameRate) throws IOException {
+    private void recordFrames(FFmpegFrameRecorder recorder, List<Article> articles) throws IOException {
         try (OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage()) {
             for (Article article : articles) {
-                Mat img = opencv_imgcodecs.imread(article.getImageFile().getAbsolutePath());
-                Frame frame = converter.convert(img);
-                for (int j = 0; j < frameRate; j++) {
-                    recorder.record(frame);
+                Mat articleImg = opencv_imgcodecs.imread(article.getImageFile().getAbsolutePath());
+
+                try (FFmpegFrameGrabber effectGrabber = new FFmpegFrameGrabber(VideoConfig.EFFECT_FILE)) {
+                    effectGrabber.start();
+
+                    Frame effectFrame;
+                    while ((effectFrame = effectGrabber.grabImage()) != null) {
+                        Mat effectImg = converter.convertToMat(effectFrame);
+
+                        int effectWidth = effectImg.cols();
+                        int effectHeight = effectImg.rows();
+
+                        int topMargin = 430;
+                        int bottomMargin = 480;
+                        int availableHeight = effectHeight - (topMargin + bottomMargin);
+
+                        double scale = Math.min((double) effectWidth / articleImg.cols(), (double) availableHeight / articleImg.rows());
+                        int newWidth = (int) (articleImg.cols() * scale);
+                        int newHeight = (int) (articleImg.rows() * scale);
+
+                        Mat resizedArticleImg = new Mat();
+                        opencv_imgproc.resize(articleImg, resizedArticleImg, new Size(newWidth, newHeight));
+
+                        Mat combined = effectImg.clone();
+                        int xOffset = (effectWidth - newWidth) / 2;
+                        int yOffset = topMargin + (availableHeight - newHeight) / 2;
+
+                        resizedArticleImg.copyTo(combined.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
+
+                        Frame finalFrame = converter.convert(combined);
+                        recorder.record(finalFrame);
+                    }
+
+                    effectGrabber.stop();
                 }
             }
         }
