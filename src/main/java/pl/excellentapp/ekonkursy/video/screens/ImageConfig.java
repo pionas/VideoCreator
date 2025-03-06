@@ -1,12 +1,15 @@
 package pl.excellentapp.ekonkursy.video.screens;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 
-@RequiredArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+@Builder
 public class ImageConfig {
 
     private final File file;
@@ -15,14 +18,11 @@ public class ImageConfig {
     private final Position position;
     private ElementSize size;
 
-    public ImageConfig(File file, int frames, Position position) {
-        this.file = file;
-        this.frames = frames;
-        this.position = position;
-        this.delayFrames = 0;
-    }
-
     public boolean isBetween(int index) {
         return index >= (delayFrames) && index < (frames + delayFrames);
+    }
+
+    public boolean hasAfter(int index) {
+        return (delayFrames + frames) > index;
     }
 }

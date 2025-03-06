@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static pl.excellentapp.ekonkursy.MovieConfig.WELCOME_IMAGE_FILE;
+
 public class ThankYouImageGenerator {
 
     private static final String FONT_TITLE_PATH = "./fonts/BebasNeue-Regular.ttf";
@@ -47,11 +49,11 @@ public class ThankYouImageGenerator {
 
 
     public ImageConfig generateImageConfig(int frames) {
-        return new ImageConfig(
-                generateThankYouImageFile(),
-                frames,
-                new Position(this.height / 2, this.width / 2)
-        );
+        return  ImageConfig.builder()
+                .file(generateThankYouImageFile())
+                .frames(frames)
+                .position(new Position(height / 2, width / 2))
+                .build();
     }
 
     private File generateThankYouImageFile() {

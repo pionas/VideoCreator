@@ -66,7 +66,11 @@ public class ArticleVideoProjectConfig {
     private Screen getWelcomeScreen() {
         int frames = 30;
         List<ImageConfig> images = List.of(
-                new ImageConfig(new File(WELCOME_IMAGE_FILE), frames, new Position(height / 2, width / 2))
+                ImageConfig.builder()
+                        .file(new File(WELCOME_IMAGE_FILE))
+                        .frames(frames)
+                        .position(new Position(height / 2, width / 2))
+                        .build()
         );
         return ImageMovieScreen.builder()
                 .targetWidth(width)
@@ -89,13 +93,8 @@ public class ArticleVideoProjectConfig {
                         .build()
         );
 
-        imageDownloader.downloadImages(articles);
-        ResizeFilter resizeFilter = new ResizeFilter((MovieConfig.WIDTH - MovieConfig.MARGIN_LEFT - MovieConfig.MARGIN_RIGHT), (MovieConfig.HEIGHT - MovieConfig.MARGIN_TOP - MovieConfig.MARGIN_BOTTOM));
-        imageProcessorService.processImages(articles, List.of(resizeFilter));
         AtomicInteger delay = new AtomicInteger();
-        List<ImageConfig> imagesFromArticles = articles.stream()
-                .map(article -> new ImageConfig(article.getImageFile(), frameRate, (frameRate * (delay.getAndIncrement())), new Position(height / 2, width / 2)))
-                .toList();
+        List<ImageConfig> imagesFromArticles = getImageConfigs(delay);
         return ImageMovieScreen.builder()
                 .targetWidth(width)
                 .targetHeight(height)
@@ -103,6 +102,24 @@ public class ArticleVideoProjectConfig {
                 .images(imagesFromArticles)
                 .videos(videos)
                 .maxFrames((imagesFromArticles.size() * delay.get() + frameRate))
+                .build();
+    }
+
+    private List<ImageConfig> getImageConfigs(AtomicInteger delay) {
+        imageDownloader.downloadImages(articles);
+        ResizeFilter resizeFilter = new ResizeFilter((MovieConfig.WIDTH - MovieConfig.MARGIN_LEFT - MovieConfig.MARGIN_RIGHT), (MovieConfig.HEIGHT - MovieConfig.MARGIN_TOP - MovieConfig.MARGIN_BOTTOM));
+        imageProcessorService.processImages(articles, List.of(resizeFilter));
+        return articles.stream()
+                .map(article -> getImageConfig(delay, article))
+                .toList();
+    }
+
+    private ImageConfig getImageConfig(AtomicInteger delay, Article article) {
+        return ImageConfig.builder()
+                .file(article.getImageFile())
+                .frames(frameRate)
+                .delayFrames(10 + frameRate * (delay.getAndIncrement()))
+                .position(new Position(height / 2, width / 2))
                 .build();
     }
 

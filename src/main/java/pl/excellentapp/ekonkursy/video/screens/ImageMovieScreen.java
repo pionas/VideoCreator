@@ -119,7 +119,7 @@ public class ImageMovieScreen implements Screen {
     }
 
     private boolean hasAnyImageMoreFrame(int index) {
-        return images.stream().anyMatch(image -> image.isBetween(index));
+        return images.stream().anyMatch(image -> image.hasAfter(index));
     }
 
     private boolean hasAnyVideoMoreFrame() {
