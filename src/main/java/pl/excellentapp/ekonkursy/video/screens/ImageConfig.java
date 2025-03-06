@@ -13,6 +13,7 @@ public class ImageConfig {
     private final int frames;
     private final int delayFrames;
     private final Position position;
+    private ElementSize size;
 
     public ImageConfig(File file, int frames, Position position) {
         this.file = file;

@@ -1,10 +1,10 @@
-package pl.excellentapp.ekonkursy.image.filters;
+package pl.excellentapp.ekonkursy.video.filters;
 
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Scalar;
 
-public class BorderFilter implements ImageFilter {
+public class BorderFilter implements MatFilter {
     private final int borderSize;
     private final Scalar borderColor;
 

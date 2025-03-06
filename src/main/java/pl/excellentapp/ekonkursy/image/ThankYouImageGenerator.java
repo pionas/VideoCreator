@@ -1,12 +1,9 @@
-package pl.excellentapp.ekonkursy.video.screens;
+package pl.excellentapp.ekonkursy.image;
 
-import lombok.RequiredArgsConstructor;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
-import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.opencv_core.Mat;
 import pl.excellentapp.ekonkursy.MovieConfig;
 import pl.excellentapp.ekonkursy.TextColorConfig;
-import pl.excellentapp.ekonkursy.video.FrameProcessor;
+import pl.excellentapp.ekonkursy.video.screens.ImageConfig;
+import pl.excellentapp.ekonkursy.video.screens.Position;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -23,8 +20,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-@RequiredArgsConstructor
-public class ThankYouScreen implements Screen {
+public class ThankYouImageGenerator {
 
     private static final String FONT_TITLE_PATH = "./fonts/BebasNeue-Regular.ttf";
     private static final String FONT_NAMES_PATH = "./fonts/Lato-Regular.ttf";
@@ -36,28 +32,29 @@ public class ThankYouScreen implements Screen {
 
     private final int width;
     private final int height;
-    private final int frames;
     private final Set<String> names;
     private final Color backgroundColor;
     private final Color textColor;
 
-    public ThankYouScreen(Set<String> names, int frames, int width, int height) {
+    public ThankYouImageGenerator(Set<String> names, int width, int height) {
         this.width = width;
         this.height = height;
-        this.frames = frames;
         this.names = names;
         Color[] selectedColors = TextColorConfig.TEXT_COLORS.get(RANDOM.nextInt(TextColorConfig.TEXT_COLORS.size()));
         this.backgroundColor = selectedColors[1];
         this.textColor = selectedColors[0];
     }
 
-    @Override
-    public void record(FFmpegFrameRecorder recorder, FrameProcessor frameProcessor) throws Exception {
-        Mat img = opencv_imgcodecs.imread(generateThankYouScreen().getAbsolutePath());
-        frameProcessor.recordFrame(recorder, img, frames);
+
+    public ImageConfig generateImageConfig(int frames) {
+        return new ImageConfig(
+                generateThankYouImageFile(),
+                frames,
+                new Position(this.height / 2, this.width / 2)
+        );
     }
 
-    public File generateThankYouScreen() {
+    private File generateThankYouImageFile() {
         BufferedImage image = new BufferedImage(width, height - 200, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
@@ -201,4 +198,5 @@ public class ThankYouScreen implements Screen {
             return new Font("Arial", Font.BOLD, size);
         }
     }
+
 }

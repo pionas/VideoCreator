@@ -2,7 +2,7 @@ package pl.excellentapp.ekonkursy.image;
 
 import lombok.RequiredArgsConstructor;
 import pl.excellentapp.ekonkursy.article.models.Article;
-import pl.excellentapp.ekonkursy.image.filters.ImageFilter;
+import pl.excellentapp.ekonkursy.video.filters.MatFilter;
 
 import java.io.File;
 import java.util.List;
@@ -12,7 +12,7 @@ public class ImageProcessorService {
 
     private final ImageProcessor imageProcessor;
 
-    public void processImages(List<Article> articles, List<ImageFilter> filters) {
+    public void processImages(List<Article> articles, List<MatFilter> filters) {
         articles.forEach(article -> {
             File processedFile = imageProcessor.processImage(article.getImageFile(), filters);
             article.addFile(processedFile);

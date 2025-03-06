@@ -5,12 +5,14 @@ import pl.excellentapp.ekonkursy.article.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.image.ImageProcessorService;
-import pl.excellentapp.ekonkursy.image.filters.ResizeFilter;
+import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
+import pl.excellentapp.ekonkursy.video.filters.ResizeFilter;
+import pl.excellentapp.ekonkursy.video.screens.ElementSize;
 import pl.excellentapp.ekonkursy.video.screens.ImageConfig;
 import pl.excellentapp.ekonkursy.video.screens.ImageMovieScreen;
+import pl.excellentapp.ekonkursy.video.screens.Order;
 import pl.excellentapp.ekonkursy.video.screens.Position;
 import pl.excellentapp.ekonkursy.video.screens.Screen;
-import pl.excellentapp.ekonkursy.video.screens.ThankYouScreen;
 import pl.excellentapp.ekonkursy.video.screens.VideoConfig;
 
 import java.io.File;
@@ -62,20 +64,29 @@ public class ArticleVideoProjectConfig {
     }
 
     private Screen getWelcomeScreen() {
+        int frames = 30;
         List<ImageConfig> images = List.of(
-                new ImageConfig(new File(WELCOME_IMAGE_FILE), 30, new Position(height / 2, width / 2))
+                new ImageConfig(new File(WELCOME_IMAGE_FILE), frames, new Position(height / 2, width / 2))
         );
         return ImageMovieScreen.builder()
                 .targetWidth(width)
                 .targetHeight(height)
                 .background(MovieConfig.BACKGROUND_COLOR_WHITE)
                 .images(images)
+                .maxFrames(frames)
                 .build();
     }
 
     private Screen getListOfArticleScreen() {
         List<VideoConfig> videos = List.of(
-                VideoConfig.nonBlocking(new File(MovieConfig.EFFECT_FILE), new Position(height / 2, width / 2))
+                VideoConfig.builder()
+                        .file(new File(MovieConfig.EFFECT_FILE))
+                        .loop(false)
+                        .executionMode(ExecutionMode.NON_BLOCKING)
+                        .position(new Position(height / 2, width / 2))
+                        .order(Order.START)
+                        .delayFrames(0)
+                        .build()
         );
 
         imageDownloader.downloadImages(articles);
@@ -91,12 +102,35 @@ public class ArticleVideoProjectConfig {
                 .background(MovieConfig.BACKGROUND_COLOR_WHITE)
                 .images(imagesFromArticles)
                 .videos(videos)
+                .maxFrames((imagesFromArticles.size() * delay.get() + frameRate))
                 .build();
     }
 
     private Screen getThankYouScreen() {
         Set<String> thankYouNames = getUsernameToThankYou();
-        return new ThankYouScreen(thankYouNames, 30, width, height);
+        ImageConfig image = new ThankYouImageGenerator(thankYouNames, width, height)
+                .generateImageConfig(frameRate * 3);
+
+        List<VideoConfig> videos = List.of(
+                VideoConfig.builder()
+                        .file(new File(MovieConfig.SUBSCRIBE_FILE))
+                        .loop(true)
+                        .executionMode(ExecutionMode.NON_BLOCKING)
+                        .position(new Position(height - 300, width / 2))
+                        .size(ElementSize.builder().maxWidth(200).maxHeight(200).build())
+                        .order(Order.END)
+                        .delayFrames(0)
+                        .build()
+        );
+
+        return ImageMovieScreen.builder()
+                .targetWidth(width)
+                .targetHeight(height)
+                .background(MovieConfig.BACKGROUND_COLOR_WHITE)
+                .images(List.of(image))
+                .videos(videos)
+                .maxFrames(frameRate * 3)
+                .build();
     }
 
     private Set<String> getUsernameToThankYou() {

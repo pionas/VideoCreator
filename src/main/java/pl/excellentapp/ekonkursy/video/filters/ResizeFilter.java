@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy.image.filters;
+package pl.excellentapp.ekonkursy.video.filters;
 
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -6,7 +6,8 @@ import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
 
-public class ResizeFilter implements ImageFilter {
+public class ResizeFilter implements MatFilter {
+
     private final int maxWidth;
     private final int maxHeight;
     private final Scalar backgroundColor;

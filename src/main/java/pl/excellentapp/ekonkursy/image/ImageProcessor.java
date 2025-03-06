@@ -2,20 +2,20 @@ package pl.excellentapp.ekonkursy.image;
 
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
-import pl.excellentapp.ekonkursy.image.filters.ImageFilter;
+import pl.excellentapp.ekonkursy.video.filters.MatFilter;
 
 import java.io.File;
 import java.util.List;
 
 public class ImageProcessor {
 
-    public File processImage(File imageFile, List<ImageFilter> filters) {
+    public File processImage(File imageFile, List<MatFilter> filters) {
         if (imageFile == null || !imageFile.exists()) {
             System.out.println("Nieprawidłowy obraz: " + (imageFile != null ? imageFile.getAbsolutePath() : "null"));
             return null;
         }
         Mat img = opencv_imgcodecs.imread(imageFile.getAbsolutePath());
-        for (ImageFilter filter : filters) {
+        for (MatFilter filter : filters) {
             img = filter.apply(img);
         }
         String outputPath = imageFile.getParent() + File.separator + "processed_" + imageFile.getName();
@@ -23,13 +23,4 @@ public class ImageProcessor {
 
         return new File(outputPath);
     }
-
-    public Mat loadImage(File imageFile) {
-        if (imageFile == null || !imageFile.exists()) {
-            System.out.println("Nieprawidłowy obraz: " + (imageFile != null ? imageFile.getAbsolutePath() : "null"));
-            return null;
-        }
-        return opencv_imgcodecs.imread(imageFile.getAbsolutePath());
-    }
-
 }
