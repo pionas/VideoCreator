@@ -1,10 +1,16 @@
 package pl.excellentapp.ekonkursy;
 
 import lombok.RequiredArgsConstructor;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import pl.excellentapp.ekonkursy.image.ImageProcessor;
+import pl.excellentapp.ekonkursy.image.filters.BorderFilter;
+import pl.excellentapp.ekonkursy.image.filters.ImageFilter;
+import pl.excellentapp.ekonkursy.image.filters.ResizeFilter;
 import pl.excellentapp.ekonkursy.models.Article;
 import pl.excellentapp.ekonkursy.models.ArticlesLastAdded;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,8 +59,12 @@ public class VideoCreatorFacade {
     }
 
     private void processArticleImages(List<Article> articles) {
+        List<ImageFilter> filters = Arrays.asList(
+                new ResizeFilter(VideoConfig.WIDTH, VideoConfig.HEIGHT, VideoConfig.BACKGROUND_COLOR_BLACK),
+                new BorderFilter(20, new Scalar(126, 126, 126, 126) )
+        );
         articles.forEach(article -> {
-            File processedFile = imageProcessor.processImage(article.getImageFile(), VideoConfig.WIDTH, VideoConfig.HEIGHT);
+            File processedFile = imageProcessor.processImage(article.getImageFile(), filters);
             article.addFile(processedFile);
         });
     }

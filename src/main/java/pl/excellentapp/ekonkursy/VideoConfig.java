@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.bytedeco.opencv.opencv_core.Scalar;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-final class VideoConfig {
+public final class VideoConfig {
 
     public static final String EKONKURSY_API_URL = "https://www.e-konkursy.info";
     public static final String OUTPUT_FILE = "output.mp4";
