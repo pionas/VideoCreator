@@ -38,6 +38,12 @@ public class ImageMovieScreen implements Screen {
             try {
                 grabber.start();
                 grabbers.add(grabber);
+                Frame effectFrame;
+                while ((effectFrame = grabber.grabImage()) != null) {
+                    video.setLastEffect(effectFrame.clone());
+                }
+                grabber.stop();
+                grabber.restart();
             } catch (FrameGrabber.Exception e) {
                 System.out.println("############ ERROR ##############" + e.getMessage());
             }
@@ -80,11 +86,12 @@ public class ImageMovieScreen implements Screen {
                     if (videos.get(i).isLoop()) {
                         grabber.restart();
                         frame = grabber.grab();
+                    } else if (videos.get(i).hasEffect()) {
+                        frame = videos.get(i).getLastEffect().clone();
                     }
                 }
-                Mat videoMat = frameProcessor.convert(frame);
-                if (videoMat != null) {
-                    overlayImage(outputFrame, videoMat, videos.get(i).getPosition());
+                if (frame != null) {
+                    overlayImage(outputFrame, frameProcessor.convert(frame), videos.get(i).getPosition());
                 }
             } catch (FrameGrabber.Exception e) {
                 System.out.println("############ ERROR ##############" + e.getMessage());
