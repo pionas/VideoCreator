@@ -17,6 +17,7 @@ import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.ThankYouScreenGenerator;
 import pl.excellentapp.ekonkursy.VideoConfig;
 import pl.excellentapp.ekonkursy.article.models.Article;
+import pl.excellentapp.ekonkursy.video.screens.MovieScreen;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,54 +65,8 @@ public class VideoRecorder {
     }
 
     private void addWelcomeScreen(FFmpegFrameRecorder recorder, String welcomeFilePath, int targetWidth, int targetHeight) {
-        File welcomeFile = new File(welcomeFilePath);
-        if (!welcomeFile.exists()) {
-            System.err.println("Plik powitalny nie istnieje: " + welcomeFilePath);
-            return;
-        }
-        try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(welcomeFilePath);
-             OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
-
-            grabber.start();
-            int originalWidth = grabber.getImageWidth();
-            int originalHeight = grabber.getImageHeight();
-
-            if (originalWidth == 0 || originalHeight == 0) {
-                System.err.println("Nie można uzyskać rozmiaru obrazu.");
-                return;
-            }
-
-            double aspectRatio = (double) originalWidth / originalHeight;
-            int newWidth, newHeight;
-
-            if (targetWidth / (double) targetHeight > aspectRatio) {
-                newHeight = targetHeight;
-                newWidth = (int) (targetHeight * aspectRatio);
-            } else {
-                newWidth = targetWidth;
-                newHeight = (int) (targetWidth / aspectRatio);
-            }
-
-            Frame frame;
-            while ((frame = grabber.grabFrame()) != null) {
-                if (frame.image != null) {
-                    Mat originalMat = converter.convert(frame);
-                    Mat resizedMat = new Mat();
-                    opencv_imgproc.resize(originalMat, resizedMat, new Size(newWidth, newHeight), 0, 0, opencv_imgproc.INTER_AREA);
-
-                    Mat finalMat = new Mat(targetHeight, targetWidth, originalMat.type(), VideoConfig.BACKGROUND_COLOR_WHITE);
-                    int xOffset = (targetWidth - newWidth) / 2;
-                    int yOffset = (targetHeight - newHeight) / 2;
-                    resizedMat.copyTo(finalMat.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
-                    frameProcessor.recordFrame(recorder, finalMat, 1);
-                } else {
-                    frameProcessor.recordFrame(recorder, frame, 1);
-                }
-            }
-            grabber.stop();
-        } catch (Exception e) {
-            System.err.println("Błąd przy dodawaniu WelcomeScreen: " + e.getMessage());
-        }
+        MovieScreen movieScreen = new MovieScreen(welcomeFilePath, targetWidth, targetHeight);
+        movieScreen.record(recorder, frameProcessor);
     }
 
     private void recordFrames(FFmpegFrameRecorder recorder, List<Article> articles, int frameRate) throws IOException {

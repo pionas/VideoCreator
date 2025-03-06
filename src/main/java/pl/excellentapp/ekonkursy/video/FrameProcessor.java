@@ -29,4 +29,8 @@ public class FrameProcessor {
             System.err.println("Błąd nagrywania klatki: " + e.getMessage());
         }
     }
+
+    public Mat convert(Frame frame) {
+        return converter.convert(frame);
+    }
 }
