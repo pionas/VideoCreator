@@ -10,13 +10,17 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.models.Article;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -261,13 +265,37 @@ public class VideoRecorder {
                 opencv_imgproc.resize(img, resizedImg, new Size(newWidth, newHeight));
 
                 Mat frameMat = new Mat(videoHeight, videoWidth, img.type(), new Scalar(255, 255, 255, 255));
-
                 int xOffset = (videoWidth - newWidth) / 2;
                 int yOffset = (videoHeight - newHeight) / 2;
 
                 Mat roi = frameMat.apply(new Rect(xOffset, yOffset, newWidth, newHeight));
                 resizedImg.copyTo(roi);
 
+                String text = "Ostatnia szansa";
+                int fontFace = opencv_imgproc.FONT_HERSHEY_TRIPLEX;
+                double fontScale = 1.0;
+                int thickness = 2;
+                Scalar textColor = new Scalar(0, 0, 0, 255); // Czarny kolor
+
+                // Pobranie rozmiaru tekstu - poprawiona wersja
+                IntBuffer baseline = IntBuffer.allocate(1);
+                Size textSize = opencv_imgproc.getTextSize(text, fontFace, fontScale, thickness, baseline);
+                int textWidth = textSize.width();
+                int textHeight = textSize.height();
+
+                // Wyliczenie pozycji tekstu 50px poniżej logo
+                int textX = xOffset + (newWidth - textWidth) / 2;
+                int textY = yOffset + newHeight - 50 + textHeight;
+
+                // Sprawdzenie czy tekst nie wychodzi poza obraz
+                if (textY + textHeight > videoHeight) {
+                    textY = videoHeight - 10; // Zapobiega wychodzeniu poza ramkę
+                }
+
+                // Naniesienie tekstu na obraz
+                opencv_imgproc.putText(frameMat, text, new Point(textX, textY), fontFace, fontScale, textColor);
+
+                // Konwersja i zapisanie do wideo
                 Frame frame = converter.convert(frameMat);
                 for (int j = 0; j < frameRate * 1.5; j++) {
                     recorder.record(frame);
@@ -276,4 +304,16 @@ public class VideoRecorder {
         }
     }
 
+    private Font loadCustomFont(String fontPath, int size) {
+        try {
+            File fontFile = new File(fontPath);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont((float) size);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(font);
+            return font;
+        } catch (Exception e) {
+            System.err.println("Błąd ładowania czcionki: " + e.getMessage());
+            return new Font("Arial", Font.BOLD, size);
+        }
+    }
 }
