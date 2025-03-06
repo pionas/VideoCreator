@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import pl.excellentapp.ekonkursy.article.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
+import pl.excellentapp.ekonkursy.core.DirectoryCleaner;
+import pl.excellentapp.ekonkursy.core.FileDownloader;
+import pl.excellentapp.ekonkursy.core.JsonDownloader;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.image.ImageProcessorService;
 

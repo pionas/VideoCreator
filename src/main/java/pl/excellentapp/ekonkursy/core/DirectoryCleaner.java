@@ -1,4 +1,6 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.core;
+
+import pl.excellentapp.ekonkursy.VideoConfig;
 
 import java.io.File;
 

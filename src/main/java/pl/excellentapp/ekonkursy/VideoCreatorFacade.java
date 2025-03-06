@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import pl.excellentapp.ekonkursy.article.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.article.models.Article;
+import pl.excellentapp.ekonkursy.core.DirectoryCleaner;
 import pl.excellentapp.ekonkursy.image.ImageProcessorService;
 
 import java.util.List;

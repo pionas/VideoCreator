@@ -1,7 +1,7 @@
 package pl.excellentapp.ekonkursy.article;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.ekonkursy.FileDownloader;
+import pl.excellentapp.ekonkursy.core.FileDownloader;
 import pl.excellentapp.ekonkursy.VideoConfig;
 import pl.excellentapp.ekonkursy.article.models.Article;
 

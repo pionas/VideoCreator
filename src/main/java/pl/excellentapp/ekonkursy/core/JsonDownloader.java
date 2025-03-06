@@ -1,6 +1,7 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,13 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
+@RequiredArgsConstructor
 public class JsonDownloader {
 
     private final ObjectMapper objectMapper;
-
-    JsonDownloader(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     public <T> T getJson(String urlString, Class<T> clazz) {
         return getJson(urlString, "GET", "application/json", clazz);
