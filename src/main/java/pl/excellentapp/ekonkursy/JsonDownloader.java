@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-class JsonDownloader {
+public class JsonDownloader {
 
     private final ObjectMapper objectMapper;
 
@@ -16,7 +16,7 @@ class JsonDownloader {
         this.objectMapper = objectMapper;
     }
 
-    <T> T getJson(String urlString, Class<T> clazz) {
+    public <T> T getJson(String urlString, Class<T> clazz) {
         return getJson(urlString, "GET", "application/json", clazz);
     }
 

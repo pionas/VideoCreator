@@ -2,7 +2,10 @@ package pl.excellentapp.ekonkursy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import pl.excellentapp.ekonkursy.article.ArticleFetcher;
+import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
+import pl.excellentapp.ekonkursy.image.ImageProcessorService;
 
 class VideoCreator {
 
@@ -15,7 +18,13 @@ class VideoCreator {
         VideoRecorder videoRecorder = new VideoRecorder();
         ImageProcessor imageProcessor = new ImageProcessor();
 
-        VideoCreatorFacade videoCreator = new VideoCreatorFacade(fileDownloader, jsonDownloader, imageProcessor, videoRecorder);
+        ArticleFetcher articleFetcher = new ArticleFetcher(jsonDownloader);
+        ArticleImageDownloader imageDownloader = new ArticleImageDownloader(fileDownloader);
+        ImageProcessorService imageProcessorService = new ImageProcessorService(imageProcessor);
+        DirectoryCleaner imageDirectoryCleaner = new DirectoryCleaner();
+
+        VideoCreatorFacade videoCreator = new VideoCreatorFacade(articleFetcher, imageDownloader, imageProcessorService, videoRecorder, imageDirectoryCleaner);
         videoCreator.createVideo();
     }
+
 }

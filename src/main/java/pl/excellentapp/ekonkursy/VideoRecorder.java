@@ -14,7 +14,7 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
-import pl.excellentapp.ekonkursy.models.Article;
+import pl.excellentapp.ekonkursy.article.models.Article;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;

@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy.models;
+package pl.excellentapp.ekonkursy.article.models;
 
 import lombok.Data;
 

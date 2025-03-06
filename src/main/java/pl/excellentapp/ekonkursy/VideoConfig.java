@@ -8,6 +8,7 @@ import org.bytedeco.opencv.opencv_core.Scalar;
 public final class VideoConfig {
 
     public static final String EKONKURSY_API_URL = "https://www.e-konkursy.info";
+    public static final String TEMPORARY_DIRECTORY = "./temp";
     public static final String OUTPUT_FILE = "output.mp4";
     public static final String WELCOME_FILE = "./movies/welcome.mp4";
     public static final String SUBSCRIBE_FILE = "./movies/subscribe.mp4";

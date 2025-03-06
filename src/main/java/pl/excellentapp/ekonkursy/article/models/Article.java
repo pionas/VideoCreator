@@ -1,15 +1,14 @@
-package pl.excellentapp.ekonkursy.models;
+package pl.excellentapp.ekonkursy.article.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import pl.excellentapp.ekonkursy.VideoConfig;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
-
-import static pl.excellentapp.ekonkursy.VideoCreatorFacade.IMAGE_DIRECTORY;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -79,7 +78,7 @@ public class Article {
     }
 
     public String getFileName() {
-        return String.format("./%s/%d_%s", IMAGE_DIRECTORY, id, image);
+        return String.format("./%s/%d_%s", VideoConfig.TEMPORARY_DIRECTORY, id, image);
     }
 
     public String getUserName() {

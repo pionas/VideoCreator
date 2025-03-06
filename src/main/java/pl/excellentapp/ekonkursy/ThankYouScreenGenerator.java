@@ -15,8 +15,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static pl.excellentapp.ekonkursy.VideoCreatorFacade.IMAGE_DIRECTORY;
-
 public class ThankYouScreenGenerator {
 
     private static final String FONT_TITLE_PATH = "./fonts/BebasNeue-Regular.ttf";
@@ -56,7 +54,7 @@ public class ThankYouScreenGenerator {
 
         g.dispose();
 
-        String outputPath = String.format("./%s/thank_you.png", IMAGE_DIRECTORY);
+        String outputPath = String.format("./%s/thank_you.png", VideoConfig.TEMPORARY_DIRECTORY);
         File outputFile = new File(outputPath);
         try {
             ImageIO.write(image, "png", outputFile);
