@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-final class TextColorConfig {
+public final class TextColorConfig {
 
     public static final java.util.List<Color[]> TEXT_COLORS = List.of(
 //            new Color[]{new Color(0xCEE2B9), new Color(0x000000)},

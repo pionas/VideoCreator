@@ -7,7 +7,7 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
-import pl.excellentapp.ekonkursy.VideoConfig;
+import pl.excellentapp.ekonkursy.MovieConfig;
 import pl.excellentapp.ekonkursy.video.FrameProcessor;
 
 import java.io.File;
@@ -54,7 +54,7 @@ public class MovieScreen implements Screen {
                     Mat resizedMat = new Mat();
                     opencv_imgproc.resize(originalMat, resizedMat, new Size(newWidth, newHeight), 0, 0, opencv_imgproc.INTER_AREA);
 
-                    Mat finalMat = new Mat(targetHeight, targetWidth, originalMat.type(), VideoConfig.BACKGROUND_COLOR_WHITE);
+                    Mat finalMat = new Mat(targetHeight, targetWidth, originalMat.type(), MovieConfig.BACKGROUND_COLOR_WHITE);
                     int xOffset = (targetWidth - newWidth) / 2;
                     int yOffset = (targetHeight - newHeight) / 2;
                     resizedMat.copyTo(finalMat.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));

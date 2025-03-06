@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.bytedeco.opencv.opencv_core.Scalar;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class VideoConfig {
+public final class MovieConfig {
 
     public static final String EKONKURSY_API_URL = "https://www.e-konkursy.info";
     public static final String TEMPORARY_DIRECTORY = "./temp";
@@ -18,6 +18,8 @@ public final class VideoConfig {
     public static final int HEIGHT = 1920;
     public static final int MARGIN_TOP = 430;
     public static final int MARGIN_BOTTOM = 480;
+    public static final int MARGIN_LEFT = 10;
+    public static final int MARGIN_RIGHT = 10;
     public static final int FRAME_RATE = 30;
     public static final Scalar BACKGROUND_COLOR_BLACK = new Scalar(0, 0, 0, 0);
     public static final Scalar BACKGROUND_COLOR_WHITE = new Scalar(255, 255, 255, 255);

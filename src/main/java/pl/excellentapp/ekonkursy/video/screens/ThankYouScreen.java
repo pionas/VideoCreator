@@ -1,4 +1,12 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.video.screens;
+
+import lombok.RequiredArgsConstructor;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.opencv.global.opencv_imgcodecs;
+import org.bytedeco.opencv.opencv_core.Mat;
+import pl.excellentapp.ekonkursy.MovieConfig;
+import pl.excellentapp.ekonkursy.TextColorConfig;
+import pl.excellentapp.ekonkursy.video.FrameProcessor;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -15,7 +23,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class ThankYouScreenGenerator {
+@RequiredArgsConstructor
+public class ThankYouScreen implements Screen {
 
     private static final String FONT_TITLE_PATH = "./fonts/BebasNeue-Regular.ttf";
     private static final String FONT_NAMES_PATH = "./fonts/Lato-Regular.ttf";
@@ -25,15 +34,31 @@ public class ThankYouScreenGenerator {
     private static final int NAMES_FONT_SIZE = 40;
     public static final Random RANDOM = new Random();
 
-    private Color backgroundColor;
-    private Color textColor;
+    private final int width;
+    private final int height;
+    private final int frames;
+    private final Set<String> names;
+    private final Color backgroundColor;
+    private final Color textColor;
 
-    public File generateThankYouScreen(Set<String> names) {
+    public ThankYouScreen(Set<String> names, int frames, int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.frames = frames;
+        this.names = names;
         Color[] selectedColors = TextColorConfig.TEXT_COLORS.get(RANDOM.nextInt(TextColorConfig.TEXT_COLORS.size()));
         this.backgroundColor = selectedColors[1];
         this.textColor = selectedColors[0];
+    }
 
-        BufferedImage image = new BufferedImage(VideoConfig.WIDTH, VideoConfig.HEIGHT - 200, BufferedImage.TYPE_INT_ARGB);
+    @Override
+    public void record(FFmpegFrameRecorder recorder, FrameProcessor frameProcessor) throws Exception {
+        Mat img = opencv_imgcodecs.imread(generateThankYouScreen().getAbsolutePath());
+        frameProcessor.recordFrame(recorder, img, frames);
+    }
+
+    public File generateThankYouScreen() {
+        BufferedImage image = new BufferedImage(width, height - 200, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -48,13 +73,13 @@ public class ThankYouScreenGenerator {
         int namesStartY = getNamesStartY(g, names);
         int titleY = namesStartY - 100;
 
-        drawCenteredText(g, "Podziękowania dla:", VideoConfig.WIDTH / 2, titleY);
+        drawCenteredText(g, "Podziękowania dla:", width / 2, titleY);
 
         drawNames(g, names);
 
         g.dispose();
 
-        String outputPath = String.format("./%s/thank_you.png", VideoConfig.TEMPORARY_DIRECTORY);
+        String outputPath = String.format("./%s/thank_you.png", MovieConfig.TEMPORARY_DIRECTORY);
         File outputFile = new File(outputPath);
         try {
             ImageIO.write(image, "png", outputFile);
@@ -69,12 +94,12 @@ public class ThankYouScreenGenerator {
         FontMetrics metrics = g.getFontMetrics();
         int lineHeight = metrics.getHeight();
         int totalHeight = names.size() * lineHeight;
-        return (VideoConfig.HEIGHT - 200) / 2 - (totalHeight / 2);
+        return (height - 200) / 2 - (totalHeight / 2);
     }
 
     private void drawBackground(Graphics2D g) {
         g.setColor(backgroundColor);
-        g.fillRect(0, 0, VideoConfig.WIDTH, VideoConfig.HEIGHT);
+        g.fillRect(0, 0, width, height);
     }
 
     private void drawNames(Graphics2D g, Set<String> names) {
@@ -82,8 +107,8 @@ public class ThankYouScreenGenerator {
         Font nameFontBold = loadCustomFont(FONT_NAMES_BOLD_PATH, NAMES_FONT_SIZE);
         Set<Rectangle> occupiedAreas = new HashSet<>();
 
-        int centerX = VideoConfig.WIDTH / 2;
-        int centerY = (VideoConfig.HEIGHT - 200) / 2;
+        int centerX = width / 2;
+        int centerY = (height - 200) / 2;
 
         double angle = 0;
         double radius = 0;
