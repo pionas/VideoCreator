@@ -4,7 +4,7 @@ import pl.excellentapp.ekonkursy.MovieConfig;
 import pl.excellentapp.ekonkursy.article.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.article.models.Article;
-import pl.excellentapp.ekonkursy.image.ImageProcessorService;
+import pl.excellentapp.ekonkursy.article.ArticleImageProcessorService;
 import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
 import pl.excellentapp.ekonkursy.video.filters.ResizeFilter;
 import pl.excellentapp.ekonkursy.video.screens.ElementSize;
@@ -27,15 +27,15 @@ import static pl.excellentapp.ekonkursy.MovieConfig.WELCOME_IMAGE_FILE;
 public class ArticleVideoProjectConfig {
 
     private final ArticleImageDownloader imageDownloader;
-    private final ImageProcessorService imageProcessorService;
+    private final ArticleImageProcessorService articleImageProcessorService;
     private final List<Article> articles;
     private final int width;
     private final int height;
     private final int frameRate;
 
-    public ArticleVideoProjectConfig(ArticleFetcher articleFetcher, ArticleImageDownloader imageDownloader, ImageProcessorService imageProcessorService) {
+    public ArticleVideoProjectConfig(ArticleFetcher articleFetcher, ArticleImageDownloader imageDownloader, ArticleImageProcessorService articleImageProcessorService) {
         this.imageDownloader = imageDownloader;
-        this.imageProcessorService = imageProcessorService;
+        this.articleImageProcessorService = articleImageProcessorService;
         this.articles = articleFetcher.fetchArticles();
         this.width = MovieConfig.WIDTH;
         this.height = MovieConfig.HEIGHT;
@@ -108,7 +108,7 @@ public class ArticleVideoProjectConfig {
     private List<ImageConfig> getImageConfigs(AtomicInteger delay) {
         imageDownloader.downloadImages(articles);
         ResizeFilter resizeFilter = new ResizeFilter((MovieConfig.WIDTH - MovieConfig.MARGIN_LEFT - MovieConfig.MARGIN_RIGHT), (MovieConfig.HEIGHT - MovieConfig.MARGIN_TOP - MovieConfig.MARGIN_BOTTOM));
-        imageProcessorService.processImages(articles, List.of(resizeFilter));
+        articleImageProcessorService.processImages(articles, List.of(resizeFilter));
         return articles.stream()
                 .map(article -> getImageConfig(delay, article))
                 .toList();
@@ -125,8 +125,12 @@ public class ArticleVideoProjectConfig {
 
     private Screen getThankYouScreen() {
         Set<String> thankYouNames = getUsernameToThankYou();
-        ImageConfig image = new ThankYouImageGenerator(thankYouNames, width, height)
-                .generateImageConfig(frameRate * 3);
+        File file = new ThankYouImageGenerator(thankYouNames, width, height).generateThankYouImage();
+        ImageConfig image = ImageConfig.builder()
+                .file(file)
+                .frames(frameRate * 3)
+                .position(new Position(height / 2, width / 2))
+                .build();
 
         List<VideoConfig> videos = List.of(
                 VideoConfig.builder()

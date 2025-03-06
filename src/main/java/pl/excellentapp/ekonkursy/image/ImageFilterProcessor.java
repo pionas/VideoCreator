@@ -7,7 +7,7 @@ import pl.excellentapp.ekonkursy.video.filters.MatFilter;
 import java.io.File;
 import java.util.List;
 
-public class ImageProcessor {
+public class ImageFilterProcessor {
 
     public File processImage(File imageFile, List<MatFilter> filters) {
         if (imageFile == null || !imageFile.exists()) {

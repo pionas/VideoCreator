@@ -1,20 +1,21 @@
-package pl.excellentapp.ekonkursy.image;
+package pl.excellentapp.ekonkursy.article;
 
 import lombok.RequiredArgsConstructor;
 import pl.excellentapp.ekonkursy.article.models.Article;
+import pl.excellentapp.ekonkursy.image.ImageFilterProcessor;
 import pl.excellentapp.ekonkursy.video.filters.MatFilter;
 
 import java.io.File;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class ImageProcessorService {
+public class ArticleImageProcessorService {
 
-    private final ImageProcessor imageProcessor;
+    private final ImageFilterProcessor imageFilterProcessor;
 
     public void processImages(List<Article> articles, List<MatFilter> filters) {
         articles.forEach(article -> {
-            File processedFile = imageProcessor.processImage(article.getImageFile(), filters);
+            File processedFile = imageFilterProcessor.processImage(article.getImageFile(), filters);
             article.addFile(processedFile);
         });
     }
