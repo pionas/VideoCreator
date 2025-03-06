@@ -10,14 +10,7 @@ public class FrameProcessor {
     private final OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
 
     public void recordFrame(FFmpegFrameRecorder recorder, Mat mat, int frames) {
-        try {
-            Frame frame = converter.convert(mat);
-            for (int i = 0; i < frames; i++) {
-                recorder.record(frame);
-            }
-        } catch (Exception e) {
-            System.err.println("Błąd nagrywania klatki: " + e.getMessage());
-        }
+        recordFrame(recorder, converter.convert(mat), frames);
     }
 
     public void recordFrame(FFmpegFrameRecorder recorder, Frame frame, int frames) {
