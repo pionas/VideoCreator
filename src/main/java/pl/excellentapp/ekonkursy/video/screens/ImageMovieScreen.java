@@ -52,7 +52,7 @@ public class ImageMovieScreen implements Screen {
         int index = 0;
         while (hasAnyVideoMoreFrame() || hasAnyImageMoreFrame(index)) {
             Mat outputFrame = new Mat(targetHeight, targetWidth, CvType.CV_8UC3, background);
-            loopVideo(frameProcessor, grabbers, outputFrame);
+            loopVideo(index, frameProcessor, grabbers, outputFrame);
             loopImage(index, outputFrame);
             frameProcessor.recordFrame(recorder, outputFrame, 1);
             index++;
@@ -77,8 +77,11 @@ public class ImageMovieScreen implements Screen {
         }
     }
 
-    private void loopVideo(FrameProcessor frameProcessor, List<FFmpegFrameGrabber> grabbers, Mat outputFrame) {
+    private void loopVideo(int index, FrameProcessor frameProcessor, List<FFmpegFrameGrabber> grabbers, Mat outputFrame) {
         for (int i = 0; i < grabbers.size(); i++) {
+            if (videos.get(i).isDelay(index)) {
+                continue;
+            }
             FFmpegFrameGrabber grabber = grabbers.get(i);
             try {
                 Frame frame = grabber.grab();

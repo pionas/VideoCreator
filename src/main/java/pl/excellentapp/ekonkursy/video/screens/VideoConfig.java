@@ -19,23 +19,40 @@ public class VideoConfig {
     private final boolean loop;
     private final ExecutionMode executionMode;
     private final Position position;
+    private final int delayFrames;
     @Setter
     private Frame lastEffect;
 
     public static VideoConfig blockingLoop(File file, Position position) {
-        return new VideoConfig(file, true, ExecutionMode.BLOCKING, position);
+        return new VideoConfig(file, true, ExecutionMode.BLOCKING, position, 0);
     }
 
     public static VideoConfig nonBlockingLoop(File file, Position position) {
-        return new VideoConfig(file, true, ExecutionMode.NON_BLOCKING, position);
+        return new VideoConfig(file, true, ExecutionMode.NON_BLOCKING, position, 0);
     }
 
     public static VideoConfig blocking(File file, Position position) {
-        return new VideoConfig(file, false, ExecutionMode.BLOCKING, position);
+        return new VideoConfig(file, false, ExecutionMode.BLOCKING, position, 0);
     }
 
     public static VideoConfig nonBlocking(File file, Position position) {
-        return new VideoConfig(file, false, ExecutionMode.NON_BLOCKING, position);
+        return new VideoConfig(file, false, ExecutionMode.NON_BLOCKING, position, 0);
+    }
+
+    public static VideoConfig blockingLoop(File file, Position position, int delay) {
+        return new VideoConfig(file, true, ExecutionMode.BLOCKING, position, delay);
+    }
+
+    public static VideoConfig nonBlockingLoop(File file, Position position, int delay) {
+        return new VideoConfig(file, true, ExecutionMode.NON_BLOCKING, position, delay);
+    }
+
+    public static VideoConfig blocking(File file, Position position, int delay) {
+        return new VideoConfig(file, false, ExecutionMode.BLOCKING, position, delay);
+    }
+
+    public static VideoConfig nonBlocking(File file, Position position, int delay) {
+        return new VideoConfig(file, false, ExecutionMode.NON_BLOCKING, position, delay);
     }
 
     public boolean isBlocking() {
@@ -44,5 +61,9 @@ public class VideoConfig {
 
     public boolean hasEffect() {
         return Objects.nonNull(lastEffect);
+    }
+
+    public boolean isDelay(int index) {
+        return delayFrames > index;
     }
 }
