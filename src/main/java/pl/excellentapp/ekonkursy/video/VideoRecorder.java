@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.video;
 
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.ffmpeg.global.avutil;
@@ -14,10 +14,10 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
+import pl.excellentapp.ekonkursy.ThankYouScreenGenerator;
+import pl.excellentapp.ekonkursy.VideoConfig;
 import pl.excellentapp.ekonkursy.article.models.Article;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 public class VideoRecorder {
+
+    private final FrameProcessor frameProcessor = new FrameProcessor();
 
     public void recordVideo(List<Article> articles, String outputFile, int width, int height, int frameRate, Set<String> thankYouNames) {
         FFmpegLogCallback.set();
@@ -101,11 +103,9 @@ public class VideoRecorder {
                     int xOffset = (targetWidth - newWidth) / 2;
                     int yOffset = (targetHeight - newHeight) / 2;
                     resizedMat.copyTo(finalMat.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
-
-                    Frame resizedFrame = converter.convert(finalMat);
-                    recorder.record(resizedFrame);
+                    frameProcessor.recordFrame(recorder, finalMat, 1);
                 } else {
-                    recorder.record(frame);
+                    frameProcessor.recordFrame(recorder, frame, 1);
                 }
             }
             grabber.stop();
@@ -158,9 +158,7 @@ public class VideoRecorder {
                     } else {
                         effectOnlyFrame = lastEffectImg.clone();
                     }
-
-                    Frame finalFrame = converter.convert(effectOnlyFrame);
-                    recorder.record(finalFrame);
+                    frameProcessor.recordFrame(recorder, effectOnlyFrame, 1);
                     index++;
                 }
 
@@ -177,8 +175,7 @@ public class VideoRecorder {
 
                     resizedArticleImg.copyTo(combined.rowRange(yOffset, yOffset + newHeight).colRange(xOffset, xOffset + newWidth));
 
-                    Frame finalFrame = converter.convert(combined);
-                    recorder.record(finalFrame);
+                    frameProcessor.recordFrame(recorder, combined, 1);
                     index++;
                 }
             }
@@ -236,8 +233,7 @@ public class VideoRecorder {
 
                     resizedSubscribeMat.copyTo(combinedMat.rowRange(yOffset, yOffset + subscribeHeight).colRange(0, thankYouWidth));
 
-                    Frame finalFrame = converter.convert(combinedMat);
-                    recorder.record(finalFrame);
+                    frameProcessor.recordFrame(recorder, combinedMat, 1);
 
                     subscribeFrameIndex++;
                 }
@@ -248,72 +244,54 @@ public class VideoRecorder {
     private void addWelcomeScreen(FFmpegFrameRecorder recorder, int frameRate) throws IOException {
         File logo = new File(VideoConfig.WELCOME_IMAGE_FILE);
         if (logo.exists()) {
-            try (OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage()) {
-                Mat img = opencv_imgcodecs.imread(logo.getAbsolutePath());
+            Mat img = opencv_imgcodecs.imread(logo.getAbsolutePath());
 
-                int imgWidth = img.cols();
-                int imgHeight = img.rows();
+            int imgWidth = img.cols();
+            int imgHeight = img.rows();
 
-                int videoWidth = recorder.getImageWidth();
-                int videoHeight = recorder.getImageHeight();
+            int videoWidth = recorder.getImageWidth();
+            int videoHeight = recorder.getImageHeight();
 
-                double scale = Math.min((double) videoWidth / imgWidth, (double) videoHeight / imgHeight);
-                int newWidth = (int) (imgWidth * scale);
-                int newHeight = (int) (imgHeight * scale);
+            double scale = Math.min((double) videoWidth / imgWidth, (double) videoHeight / imgHeight);
+            int newWidth = (int) (imgWidth * scale);
+            int newHeight = (int) (imgHeight * scale);
 
-                Mat resizedImg = new Mat();
-                opencv_imgproc.resize(img, resizedImg, new Size(newWidth, newHeight));
+            Mat resizedImg = new Mat();
+            opencv_imgproc.resize(img, resizedImg, new Size(newWidth, newHeight));
 
-                Mat frameMat = new Mat(videoHeight, videoWidth, img.type(), new Scalar(255, 255, 255, 255));
-                int xOffset = (videoWidth - newWidth) / 2;
-                int yOffset = (videoHeight - newHeight) / 2;
+            Mat frameMat = new Mat(videoHeight, videoWidth, img.type(), new Scalar(255, 255, 255, 255));
+            int xOffset = (videoWidth - newWidth) / 2;
+            int yOffset = (videoHeight - newHeight) / 2;
 
-                Mat roi = frameMat.apply(new Rect(xOffset, yOffset, newWidth, newHeight));
-                resizedImg.copyTo(roi);
+            Mat roi = frameMat.apply(new Rect(xOffset, yOffset, newWidth, newHeight));
+            resizedImg.copyTo(roi);
 
-                String text = "Ostatnia szansa";
-                int fontFace = opencv_imgproc.FONT_HERSHEY_TRIPLEX;
-                double fontScale = 1.0;
-                int thickness = 2;
-                Scalar textColor = new Scalar(0, 0, 0, 255); // Czarny kolor
+            String text = "Ostatnia szansa";
+            int fontFace = opencv_imgproc.FONT_HERSHEY_TRIPLEX;
+            double fontScale = 1.0;
+            int thickness = 2;
+            Scalar textColor = new Scalar(0, 0, 0, 255); // Czarny kolor
 
-                // Pobranie rozmiaru tekstu - poprawiona wersja
-                IntBuffer baseline = IntBuffer.allocate(1);
-                Size textSize = opencv_imgproc.getTextSize(text, fontFace, fontScale, thickness, baseline);
-                int textWidth = textSize.width();
-                int textHeight = textSize.height();
+            // Pobranie rozmiaru tekstu - poprawiona wersja
+            IntBuffer baseline = IntBuffer.allocate(1);
+            Size textSize = opencv_imgproc.getTextSize(text, fontFace, fontScale, thickness, baseline);
+            int textWidth = textSize.width();
+            int textHeight = textSize.height();
 
-                // Wyliczenie pozycji tekstu 50px poniżej logo
-                int textX = xOffset + (newWidth - textWidth) / 2;
-                int textY = yOffset + newHeight - 50 + textHeight;
+            // Wyliczenie pozycji tekstu 50px poniżej logo
+            int textX = xOffset + (newWidth - textWidth) / 2;
+            int textY = yOffset + newHeight - 50 + textHeight;
 
-                // Sprawdzenie czy tekst nie wychodzi poza obraz
-                if (textY + textHeight > videoHeight) {
-                    textY = videoHeight - 10; // Zapobiega wychodzeniu poza ramkę
-                }
-
-                // Naniesienie tekstu na obraz
-                opencv_imgproc.putText(frameMat, text, new Point(textX, textY), fontFace, fontScale, textColor);
-
-                // Konwersja i zapisanie do wideo
-                Frame frame = converter.convert(frameMat);
-                for (int j = 0; j < frameRate * 1.5; j++) {
-                    recorder.record(frame);
-                }
+            // Sprawdzenie czy tekst nie wychodzi poza obraz
+            if (textY + textHeight > videoHeight) {
+                textY = videoHeight - 10; // Zapobiega wychodzeniu poza ramkę
             }
-        }
-    }
 
-    private Font loadCustomFont(String fontPath, int size) {
-        try {
-            File fontFile = new File(fontPath);
-            Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont((float) size);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
-            return font;
-        } catch (Exception e) {
-            System.err.println("Błąd ładowania czcionki: " + e.getMessage());
-            return new Font("Arial", Font.BOLD, size);
+            // Naniesienie tekstu na obraz
+            opencv_imgproc.putText(frameMat, text, new Point(textX, textY), fontFace, fontScale, textColor);
+
+            // Konwersja i zapisanie do wideo
+            frameProcessor.recordFrame(recorder, frameMat, ((int) (frameRate * 1.5)));
         }
     }
 }
