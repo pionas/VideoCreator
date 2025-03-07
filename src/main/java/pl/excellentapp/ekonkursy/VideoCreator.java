@@ -16,6 +16,7 @@ public class VideoCreator {
 
     public static void main(String[] args) {
         VideoProjectLoader videoProjectLoader = new VideoProjectLoader(
+                getArticleImageDownloader(),
                 getArticleImageService(),
                 getArticleFetcher()
         );
