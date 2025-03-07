@@ -14,7 +14,8 @@ public class SceneBuilder {
     private Color backgroundColor = Color.BLACK;
     private Color textColor = Color.WHITE;
     private int durationInSeconds = 5;
-    private List<SceneElement> elements = new ArrayList<>();
+    private SceneMargin margin = SceneMargin.builder().build();
+    private final List<SceneElement> elements = new ArrayList<>();
 
     public SceneBuilder setWidth(int width) {
         this.width = width;
@@ -41,12 +42,17 @@ public class SceneBuilder {
         return this;
     }
 
+    public SceneBuilder setSceneMargin(SceneMargin margin) {
+        this.margin = margin;
+        return this;
+    }
+
     public SceneBuilder addElement(SceneElement element) {
         this.elements.add(element);
         return this;
     }
 
     public SceneConfig build() {
-        return new SceneConfig(width, height, backgroundColor, textColor, durationInSeconds, elements);
+        return new SceneConfig(width, height, backgroundColor, textColor, durationInSeconds, margin, elements);
     }
 }

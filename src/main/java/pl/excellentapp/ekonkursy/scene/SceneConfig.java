@@ -3,6 +3,7 @@ package pl.excellentapp.ekonkursy.scene;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 import pl.excellentapp.ekonkursy.scene.elements.SceneElement;
 
 import java.awt.Color;
@@ -18,6 +19,7 @@ public class SceneConfig {
     private final Color backgroundColor;
     private final Color textColor;
     private final int durationInSeconds;
+    private final SceneMargin margin;
     private final List<SceneElement> elements;
 
 }
