@@ -1,13 +1,11 @@
 package pl.excellentapp.ekonkursy.core;
 
-import pl.excellentapp.ekonkursy.MovieConfig;
-
 import java.io.File;
 
 public class DirectoryCleaner {
 
     public void clean() {
-        File directory = new File(MovieConfig.TEMPORARY_DIRECTORY);
+        File directory = new File(ProjectProperties.TEMPORARY_DIRECTORY);
         if (!directory.exists() || !directory.isDirectory()) {
             System.out.println("Katalog obrazów nie istnieje lub nie jest katalogiem.");
             return;

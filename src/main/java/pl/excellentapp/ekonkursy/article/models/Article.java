@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import pl.excellentapp.ekonkursy.MovieConfig;
+import pl.excellentapp.ekonkursy.core.ProjectProperties;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -78,7 +78,7 @@ public class Article {
     }
 
     public String getFileName() {
-        return String.format("./%s/%d_%s", MovieConfig.TEMPORARY_DIRECTORY, id, image);
+        return String.format("./%s/%d_%s", ProjectProperties.TEMPORARY_DIRECTORY, id, image);
     }
 
     public String getUserName() {

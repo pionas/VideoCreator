@@ -1,11 +1,11 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.core;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bytedeco.opencv.opencv_core.Scalar;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class MovieConfig {
+public final class ProjectProperties {
 
     public static final String EKONKURSY_API_URL = "https://www.e-konkursy.info";
     public static final String TEMPORARY_DIRECTORY = "./temp";

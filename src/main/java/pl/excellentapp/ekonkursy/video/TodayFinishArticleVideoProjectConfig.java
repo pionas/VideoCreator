@@ -1,6 +1,6 @@
 package pl.excellentapp.ekonkursy.video;
 
-import pl.excellentapp.ekonkursy.MovieConfig;
+import pl.excellentapp.ekonkursy.core.ProjectProperties;
 import pl.excellentapp.ekonkursy.article.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.video.screens.ScreenFactory;
@@ -18,14 +18,14 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
     public TodayFinishArticleVideoProjectConfig(ArticleFetcher articleFetcher, ScreenFactory screenFactory) {
         this.screenFactory = screenFactory;
         this.articles = articleFetcher.fetchArticles("/api/statistics/article/end-today");
-        this.width = MovieConfig.WIDTH;
-        this.height = MovieConfig.HEIGHT;
-        this.frameRate = MovieConfig.FRAME_RATE;
+        this.width = ProjectProperties.WIDTH;
+        this.height = ProjectProperties.HEIGHT;
+        this.frameRate = ProjectProperties.FRAME_RATE;
     }
 
     public VideoProjectConfig toVideoProjectConfig() {
         return new VideoProjectConfig(
-                MovieConfig.OUTPUT_FILE,
+                ProjectProperties.OUTPUT_FILE,
                 width,
                 height,
                 frameRate,

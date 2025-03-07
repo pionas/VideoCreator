@@ -1,7 +1,7 @@
 package pl.excellentapp.ekonkursy.article;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.ekonkursy.MovieConfig;
+import pl.excellentapp.ekonkursy.core.ProjectProperties;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.video.filters.ResizeFilter;
 import pl.excellentapp.ekonkursy.video.screens.ImageConfig;
@@ -18,7 +18,7 @@ public class ArticleImageService {
 
     public List<ImageConfig> getImageConfigs(List<Article> articles, AtomicInteger delay, int width, int height) {
         imageDownloader.downloadImages(articles);
-        ResizeFilter resizeFilter = new ResizeFilter(width - MovieConfig.MARGIN_LEFT - MovieConfig.MARGIN_RIGHT, height - MovieConfig.MARGIN_TOP - MovieConfig.MARGIN_BOTTOM);
+        ResizeFilter resizeFilter = new ResizeFilter(width - ProjectProperties.MARGIN_LEFT - ProjectProperties.MARGIN_RIGHT, height - ProjectProperties.MARGIN_TOP - ProjectProperties.MARGIN_BOTTOM);
         articleImageProcessorService.processImages(articles, List.of(resizeFilter));
         return articles.stream()
                 .map(article -> createImageConfig(delay, article, width, height))
@@ -28,8 +28,8 @@ public class ArticleImageService {
     private ImageConfig createImageConfig(AtomicInteger delay, Article article, int width, int height) {
         return ImageConfig.builder()
                 .file(article.getImageFile())
-                .frames(MovieConfig.FRAME_RATE)
-                .delayFrames(10 + MovieConfig.FRAME_RATE * (delay.getAndIncrement()))
+                .frames(ProjectProperties.FRAME_RATE)
+                .delayFrames(10 + ProjectProperties.FRAME_RATE * (delay.getAndIncrement()))
                 .position(new Position(height / 2, width / 2))
                 .build();
     }

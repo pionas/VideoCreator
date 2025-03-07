@@ -1,6 +1,6 @@
 package pl.excellentapp.ekonkursy.video.screens;
 
-import pl.excellentapp.ekonkursy.MovieConfig;
+import pl.excellentapp.ekonkursy.core.ProjectProperties;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
 import pl.excellentapp.ekonkursy.video.ExecutionMode;
@@ -19,7 +19,7 @@ public class ThankYouScreenGenerator {
         return ImageMovieScreen.builder()
                 .targetWidth(width)
                 .targetHeight(height)
-                .background(MovieConfig.BACKGROUND_COLOR_WHITE)
+                .background(ProjectProperties.BACKGROUND_COLOR_WHITE)
                 .images(List.of(ImageConfig.builder()
                         .file(file)
                         .frames(frameRate * 3)
@@ -27,7 +27,7 @@ public class ThankYouScreenGenerator {
                         .build()))
                 .videos(List.of(
                         VideoConfig.builder()
-                                .file(new File(MovieConfig.SUBSCRIBE_FILE))
+                                .file(new File(ProjectProperties.SUBSCRIBE_FILE))
                                 .loop(true)
                                 .executionMode(ExecutionMode.NON_BLOCKING)
                                 .position(new Position(height - 300, width / 2))

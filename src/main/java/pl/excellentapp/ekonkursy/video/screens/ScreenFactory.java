@@ -1,7 +1,7 @@
 package pl.excellentapp.ekonkursy.video.screens;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.ekonkursy.MovieConfig;
+import pl.excellentapp.ekonkursy.core.ProjectProperties;
 import pl.excellentapp.ekonkursy.article.ArticleImageService;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.video.ExecutionMode;
@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static pl.excellentapp.ekonkursy.MovieConfig.WELCOME_IMAGE_FILE;
+import static pl.excellentapp.ekonkursy.core.ProjectProperties.WELCOME_IMAGE_FILE;
 
 @RequiredArgsConstructor
 public class ScreenFactory {
@@ -30,7 +30,7 @@ public class ScreenFactory {
         return ImageMovieScreen.builder()
                 .targetWidth(width)
                 .targetHeight(height)
-                .background(MovieConfig.BACKGROUND_COLOR_WHITE)
+                .background(ProjectProperties.BACKGROUND_COLOR_WHITE)
                 .images(List.of(
                         ImageConfig.builder()
                                 .file(new File(WELCOME_IMAGE_FILE))
@@ -48,11 +48,11 @@ public class ScreenFactory {
         return ImageMovieScreen.builder()
                 .targetWidth(width)
                 .targetHeight(height)
-                .background(MovieConfig.BACKGROUND_COLOR_WHITE)
+                .background(ProjectProperties.BACKGROUND_COLOR_WHITE)
                 .images(imagesFromArticles)
                 .videos(List.of(
                         VideoConfig.builder()
-                                .file(new File(MovieConfig.EFFECT_FILE))
+                                .file(new File(ProjectProperties.EFFECT_FILE))
                                 .loop(false)
                                 .executionMode(ExecutionMode.NON_BLOCKING)
                                 .position(new Position(height / 2, width / 2))
