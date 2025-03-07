@@ -23,6 +23,7 @@ public class VideoCreator {
                 getVideoRecorder(),
                 new DirectoryCleaner()
         );
+
         IVideoProjectConfig projectConfig = videoProjectLoader.loadProject(args);
         videoCreatorFacade.createVideo(projectConfig.toVideoProjectConfig());
         System.out.println("Generowanie wideo zakończone!");
