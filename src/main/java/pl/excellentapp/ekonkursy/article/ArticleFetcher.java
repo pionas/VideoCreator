@@ -13,8 +13,8 @@ public class ArticleFetcher {
 
     private final JsonDownloader jsonDownloader;
 
-    public List<Article> fetchArticles() {
-        ArticlesLastAdded response = jsonDownloader.getJson(MovieConfig.EKONKURSY_API_URL + "/api/articles/lastAdded", ArticlesLastAdded.class);
+    public List<Article> fetchArticles(String endpoint) {
+        ArticlesLastAdded response = jsonDownloader.getJson(MovieConfig.EKONKURSY_API_URL + endpoint, ArticlesLastAdded.class);
         if (response == null || !response.hasArticles()) {
             return List.of();
         }

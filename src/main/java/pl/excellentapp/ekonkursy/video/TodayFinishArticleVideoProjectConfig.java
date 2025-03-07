@@ -7,7 +7,7 @@ import pl.excellentapp.ekonkursy.video.screens.ScreenFactory;
 
 import java.util.List;
 
-public class ArticleVideoProjectConfig {
+public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig {
 
     private final ScreenFactory screenFactory;
     private final List<Article> articles;
@@ -15,9 +15,9 @@ public class ArticleVideoProjectConfig {
     private final int height;
     private final int frameRate;
 
-    public ArticleVideoProjectConfig(ArticleFetcher articleFetcher, ScreenFactory screenFactory) {
+    public TodayFinishArticleVideoProjectConfig(ArticleFetcher articleFetcher, ScreenFactory screenFactory) {
         this.screenFactory = screenFactory;
-        this.articles = articleFetcher.fetchArticles();
+        this.articles = articleFetcher.fetchArticles("/api/statistics/article/end-today");
         this.width = MovieConfig.WIDTH;
         this.height = MovieConfig.HEIGHT;
         this.frameRate = MovieConfig.FRAME_RATE;

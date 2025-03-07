@@ -15,11 +15,11 @@ import pl.excellentapp.ekonkursy.video.screens.ThankYouScreenGenerator;
 
 public class ApplicationConfig {
 
-    private final ArticleVideoProjectConfig articleVideoProjectConfig;
+    private final IVideoProjectConfig videoProjectConfig;
     private final VideoCreatorFacade videoCreator;
 
     public ApplicationConfig() {
-        this.articleVideoProjectConfig = new ArticleVideoProjectConfig(
+        this.videoProjectConfig = new TodayFinishArticleVideoProjectConfig(
                 getArticleFetcher(),
                 new ScreenFactory(new ThankYouScreenGenerator(), getArticleImageService())
         );
@@ -34,7 +34,7 @@ public class ApplicationConfig {
     }
 
     public VideoProjectConfig getVideoProjectConfig() {
-        return articleVideoProjectConfig.toVideoProjectConfig();
+        return videoProjectConfig.toVideoProjectConfig();
     }
 
     private ArticleImageService getArticleImageService() {
