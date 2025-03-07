@@ -16,6 +16,8 @@
         <opencv-platform.version>4.10.0-1.5.11</opencv-platform.version>
         <lombok.version>1.18.36</lombok.version>
         <jackson-databind.version>2.18.3</jackson-databind.version>
+        <junit-jupiter.version>5.8.1</junit-jupiter.version>
+        <mockito-core.version>5.16.0</mockito-core.version>
     </properties>
 
     <dependencies>
@@ -44,6 +46,18 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson-databind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

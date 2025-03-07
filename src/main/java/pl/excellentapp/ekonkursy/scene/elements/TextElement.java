@@ -1,31 +1,31 @@
 package pl.excellentapp.ekonkursy.scene.elements;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-@RequiredArgsConstructor
 @Getter
-public class TextElement implements SceneElement {
+public class TextElement extends SceneElement {
 
     private final String text;
-    private final ElementPosition position;
     private final int fontSize;
     private final Scalar color;
 
-    public TextElement(String text, ElementPosition position) {
+    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Scalar color, int fps) {
+        super(position, displayDuration, delay, fps);
         this.text = text;
-        this.position = position;
-        this.fontSize = 1;
-        this.color = new Scalar(255, 255, 255, 0);
+        this.fontSize = fontSize;
+        this.color = color;
     }
 
     @Override
-    public void render(Mat frame) {
+    public void render(Mat frame, int currentFrame) {
+        if (currentFrame < frameStart || currentFrame > frameEnd) {
+            return;
+        }
         opencv_imgproc.putText(
                 frame,
                 text,
