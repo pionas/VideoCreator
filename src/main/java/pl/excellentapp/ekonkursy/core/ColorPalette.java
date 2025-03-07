@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.core;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class TextColorConfig {
+public final class ColorPalette {
 
     public static final java.util.List<Color[]> TEXT_COLORS = List.of(
 //            new Color[]{new Color(0xCEE2B9), new Color(0x000000)},

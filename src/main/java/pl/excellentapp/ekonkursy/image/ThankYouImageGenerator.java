@@ -1,6 +1,6 @@
 package pl.excellentapp.ekonkursy.image;
 
-import pl.excellentapp.ekonkursy.TextColorConfig;
+import pl.excellentapp.ekonkursy.core.ColorPalette;
 import pl.excellentapp.ekonkursy.core.FontLoader;
 import pl.excellentapp.ekonkursy.core.TextRenderer;
 
@@ -29,7 +29,7 @@ public class ThankYouImageGenerator {
         this.width = width;
         this.height = height;
         this.names = names;
-        Color[] selectedColors = TextColorConfig.TEXT_COLORS.get(RANDOM.nextInt(TextColorConfig.TEXT_COLORS.size()));
+        Color[] selectedColors = ColorPalette.TEXT_COLORS.get(RANDOM.nextInt(ColorPalette.TEXT_COLORS.size()));
         this.backgroundColor = selectedColors[1];
         this.textColor = selectedColors[0];
         this.fontLoader = new FontLoader();
