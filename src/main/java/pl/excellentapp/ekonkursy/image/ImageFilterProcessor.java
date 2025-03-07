@@ -2,7 +2,7 @@ package pl.excellentapp.ekonkursy.image;
 
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
-import pl.excellentapp.ekonkursy.video.filters.MatFilter;
+import pl.excellentapp.ekonkursy.filters.MatFilter;
 
 import java.io.File;
 import java.util.List;

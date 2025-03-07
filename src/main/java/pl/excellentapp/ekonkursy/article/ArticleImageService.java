@@ -3,9 +3,9 @@ package pl.excellentapp.ekonkursy.article;
 import lombok.RequiredArgsConstructor;
 import pl.excellentapp.ekonkursy.core.ProjectProperties;
 import pl.excellentapp.ekonkursy.article.models.Article;
-import pl.excellentapp.ekonkursy.video.filters.ResizeFilter;
-import pl.excellentapp.ekonkursy.video.screens.ImageConfig;
-import pl.excellentapp.ekonkursy.video.screens.Position;
+import pl.excellentapp.ekonkursy.filters.ResizeFilter;
+import pl.excellentapp.ekonkursy.scene.screens.ImageConfig;
+import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,7 +30,7 @@ public class ArticleImageService {
                 .file(article.getImageFile())
                 .frames(ProjectProperties.FRAME_RATE)
                 .delayFrames(10 + ProjectProperties.FRAME_RATE * (delay.getAndIncrement()))
-                .position(new Position(height / 2, width / 2))
+                .elementPosition(new ElementPosition(height / 2, width / 2))
                 .build();
     }
 }
