@@ -22,11 +22,11 @@ public abstract class SceneElement {
     protected final ElementPosition position;
     protected final int frameStart;
     protected final int frameEnd;
-    protected final Size size;
+    protected final ElementSize size;
     protected final boolean considerMargins;
     protected final boolean applyAlphaBlending;
 
-    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, Size size, boolean considerMargins) {
+    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins) {
         this.position = position;
         this.frameStart = delay * fps;
         this.frameEnd = this.frameStart + (displayDuration * fps);
@@ -35,7 +35,7 @@ public abstract class SceneElement {
         this.applyAlphaBlending = false;
     }
 
-    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, Size size, boolean considerMargins, boolean applyAlphaBlending) {
+    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins, boolean applyAlphaBlending) {
         this.position = position;
         this.frameStart = delay * fps;
         this.frameEnd = this.frameStart + (displayDuration * fps);
@@ -86,8 +86,8 @@ public abstract class SceneElement {
             maxWidth = Math.min(availableLeft - margin.getLeft(), availableRight - margin.getRight()) * 2;
             maxHeight = Math.min(availableTop - margin.getTop(), availableBottom - margin.getBottom()) * 2;
         }
-        maxWidth = Math.min(maxWidth, size.width());
-        maxHeight = Math.min(maxHeight, size.height());
+        maxWidth = Math.min(maxWidth, size.getMaxWidth());
+        maxHeight = Math.min(maxHeight, size.getMaxHeight());
 
         double scaleX = (double) maxWidth / imgWidth;
         double scaleY = (double) maxHeight / imgHeight;

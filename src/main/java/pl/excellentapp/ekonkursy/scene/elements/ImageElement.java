@@ -3,7 +3,6 @@ package pl.excellentapp.ekonkursy.scene.elements;
 import lombok.Getter;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
 import java.nio.file.Path;
@@ -14,7 +13,7 @@ public class ImageElement extends SceneElement {
     private final Path filePath;
     private final boolean keepAfterEnd;
 
-    public ImageElement(Path filePath, ElementPosition position, int displayDuration, int delay, int fps, boolean keepAfterEnd, Size size, boolean considerMargins) {
+    public ImageElement(Path filePath, ElementPosition position, int displayDuration, int delay, int fps, boolean keepAfterEnd, ElementSize size, boolean considerMargins) {
         super(position, displayDuration, delay, fps, size, considerMargins);
         this.filePath = filePath;
         this.keepAfterEnd = keepAfterEnd;

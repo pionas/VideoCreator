@@ -18,8 +18,7 @@ public class ImageProcessor {
             g2d.drawImage(original, 0, 0, null);
             g2d.dispose();
             ImageIO.write(newImage, "jpg", imagePath.toFile());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 }

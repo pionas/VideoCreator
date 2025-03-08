@@ -1,6 +1,5 @@
 package pl.excellentapp.ekonkursy.scene.elements;
 
-import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.core.ProjectProperties;
 
 public class ElementProvider {
@@ -14,7 +13,7 @@ public class ElementProvider {
                 frameRate,
                 true,
                 false,
-                new Size(530, 300),
+                new ElementSize(530, 300),
                 false
         );
     }
@@ -28,7 +27,7 @@ public class ElementProvider {
                 frameRate,
                 false,
                 true,
-                new Size(width, height),
+                new ElementSize(width, height),
                 false
         );
     }
@@ -42,7 +41,7 @@ public class ElementProvider {
                 frameRate,
                 true,
                 false,
-                new Size(width, height),
+                new ElementSize(width, height),
                 false
         );
     }
@@ -56,7 +55,7 @@ public class ElementProvider {
                 frameRate,
                 false,
                 true,
-                new Size(width, height),
+                new ElementSize(width, height),
                 false
         );
     }
@@ -70,7 +69,7 @@ public class ElementProvider {
                 frameRate,
                 false,
                 true,
-                new Size(width, height),
+                new ElementSize(width, height),
                 false
         );
     }

@@ -17,7 +17,4 @@ public class VideoProjectConfig {
     private final int frameRate;
     private final List<SceneConfig> sceneConfigs;
 
-    public boolean isValid() {
-        return !sceneConfigs.isEmpty() && width > 0 && height > 0 && frameRate > 0 && outputFile != null;
-    }
 }

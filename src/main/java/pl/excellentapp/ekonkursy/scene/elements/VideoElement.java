@@ -5,7 +5,6 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
 import java.nio.file.Path;
@@ -22,7 +21,7 @@ public class VideoElement extends SceneElement {
     private boolean initialized = false;
     private final List<Frame> videoFrames = new ArrayList<>();
 
-    public VideoElement(Path videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, Size size, boolean considerMargins) {
+    public VideoElement(Path videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, ElementSize size, boolean considerMargins) {
         super(position, displayDuration, delay, fps, size, considerMargins);
         this.videoFilePath = videoFilePath;
         this.loop = loop;

@@ -23,9 +23,8 @@ public class VideoCreator {
 
         VideoProjectConfig videoProjectConfig = videoProjectLoader.loadProject(args).toVideoProjectConfig();
         SceneRenderer sceneRenderer = new SceneRenderer(videoProjectConfig.getFrameRate(), videoProjectConfig.getWidth(), videoProjectConfig.getHeight());
-        sceneRenderer.renderScenes(videoProjectConfig.getSceneConfigs(), "./movie123.mp4");
+        sceneRenderer.renderScenes(videoProjectConfig.getSceneConfigs(), "./movie.mp4");
         new DirectoryCleaner().clean();
-        System.out.println("Generowanie wideo zakończone!");
     }
 
     private static ArticleImageDownloader getArticleImageDownloader() {

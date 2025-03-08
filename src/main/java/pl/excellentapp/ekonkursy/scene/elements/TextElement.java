@@ -2,7 +2,6 @@ package pl.excellentapp.ekonkursy.scene.elements;
 
 import lombok.Getter;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
 import org.opencv.core.CvType;
 import pl.excellentapp.ekonkursy.core.FontLoader;
 import pl.excellentapp.ekonkursy.core.TextRenderer;
@@ -22,7 +21,7 @@ public class TextElement extends SceneElement {
     private final Color color;
     private final byte[] pixels;
 
-    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Color color, int fps, Size size, boolean considerMargins) {
+    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Color color, int fps, ElementSize size, boolean considerMargins) {
         super(position, displayDuration, delay, fps, size, considerMargins, true);
         this.text = text;
         this.fontSize = fontSize;
@@ -35,7 +34,7 @@ public class TextElement extends SceneElement {
         if (currentFrame < frameStart || currentFrame > frameEnd) {
             return;
         }
-        Mat image = new Mat(size.height(), size.width(), CvType.CV_8UC4);
+        Mat image = new Mat(size.getMaxHeight(), size.getMaxWidth(), CvType.CV_8UC4);
         image.data().put(pixels);
 
         addToVideoFrame(margin, frame, image);
@@ -44,8 +43,8 @@ public class TextElement extends SceneElement {
     private byte[] preparePixels() {
         FontLoader fontLoader = new FontLoader();
         TextRenderer textRenderer = new TextRenderer(fontLoader);
-        int width = size.width();
-        int height = size.height();
+        int width = size.getMaxWidth();
+        int height = size.getMaxHeight();
         BufferedImage transparentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = transparentImage.createGraphics();
         g2d.setComposite(AlphaComposite.Clear);

@@ -35,8 +35,6 @@ public class SceneRenderer {
                     int totalFrames = scene.getDurationInSeconds() * fps;
                     List<SceneElement> elements = scene.getElements();
 
-                    System.out.println("Renderowanie sceny: " + scene);
-
                     for (int frameNumber = 0; frameNumber < totalFrames; frameNumber++) {
                         Mat frame = new Mat(new Size(width, height), opencv_core.CV_8UC3);
                         Scalar bgColor = new Scalar(
@@ -65,9 +63,7 @@ public class SceneRenderer {
                 }
             }
             recorder.stop();
-            System.out.println("Montaż zakończony: " + outputPath);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 

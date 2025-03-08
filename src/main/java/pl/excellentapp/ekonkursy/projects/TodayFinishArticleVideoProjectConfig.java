@@ -1,6 +1,5 @@
 package pl.excellentapp.ekonkursy.projects;
 
-import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.IVideoProjectConfig;
 import pl.excellentapp.ekonkursy.VideoProjectConfig;
 import pl.excellentapp.ekonkursy.article.ArticleFetcher;
@@ -14,6 +13,7 @@ import pl.excellentapp.ekonkursy.scene.builder.SceneBuilder;
 import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
 import pl.excellentapp.ekonkursy.scene.elements.ElementProvider;
+import pl.excellentapp.ekonkursy.scene.elements.ElementSize;
 import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
 import pl.excellentapp.ekonkursy.scene.elements.TextElement;
 
@@ -73,7 +73,7 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
                         20,
                         new Color(0xB60C20),
                         frameRate,
-                        new Size(width, 100),
+                        new ElementSize(width, 100),
                         false
                 ))
                 .build();
@@ -136,7 +136,7 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
                 delay,
                 fps,
                 keepAfterEnd,
-                new Size(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM),
+                new ElementSize(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM),
                 true
         );
     }
