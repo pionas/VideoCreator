@@ -8,7 +8,6 @@ import org.bytedeco.javacv.FFmpegLogCallback;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.global.opencv_core;
-import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
@@ -27,7 +26,6 @@ public class SceneRenderer {
 
     public void renderScenes(List<SceneConfig> scenes, String outputPath) {
         FFmpegLogCallback.set();
-        int i = 0;
         try (FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputPath, width, height)) {
             setupRecorder(recorder, fps);
             try (OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
@@ -47,15 +45,14 @@ public class SceneRenderer {
                                 frame,
                                 new Point(0, 0),
                                 new Point(width, height),
-                                bgColor
+                                bgColor,
+                                opencv_imgproc.FILLED,
+                                opencv_imgproc.LINE_AA,
+                                0
                         );
-                        opencv_imgproc.rectangle(frame, new Point(0, 0), new Point(width, height), bgColor, opencv_imgproc.FILLED, opencv_imgproc.LINE_AA, 0);
-
 
                         for (SceneElement element : elements) {
                             element.render(scene.getMargin(), frame, frameNumber);
-                            opencv_imgcodecs.imwrite("./tescik/" + i + ".png", frame);
-                            i++;
                         }
                         Frame convertedFrame = converter.convert(frame);
                         recorder.record(convertedFrame);
