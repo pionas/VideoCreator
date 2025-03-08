@@ -68,6 +68,7 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
                 .setHeight(height)
                 .setDuration(durationInSeconds)
                 .addElement(getImageElement(new File(WELCOME_IMAGE_FILE), durationInSeconds, 0, frameRate, true))
+//                .addElement(new TextElement("Ostatnia szansa", new ElementPosition(height - 300, width / 2), durationInSeconds, 0, 20, new Scalar(128, 128, 128, 128), frameRate, new Size(100, 100)))
                 .build();
     }
 

@@ -20,9 +20,9 @@ public class VideoProjectLoader {
             throw new IllegalArgumentException("No project type provided.");
         }
         return switch (args[0]) {
-            case "lastAdded" -> new LastAddedArticleVideoProjectConfig(articleFetcher);
-            case "topWeek" -> new TopOfWeekArticleVideoProjectConfig(articleFetcher);
-            case "topMonth" -> new TopOfMonthArticleVideoProjectConfig(articleFetcher);
+            case "lastAdded" -> new LastAddedArticleVideoProjectConfig(imageDownloader, articleFetcher);
+            case "topWeek" -> new TopOfWeekArticleVideoProjectConfig(imageDownloader, articleFetcher);
+            case "topMonth" -> new TopOfMonthArticleVideoProjectConfig(imageDownloader, articleFetcher);
             case "todayFinish" -> new TodayFinishArticleVideoProjectConfig(imageDownloader, articleFetcher);
             default -> throw new IllegalArgumentException("Unknown project type: " + args[0]);
         };

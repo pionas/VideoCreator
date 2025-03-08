@@ -30,7 +30,7 @@ public class TextElement extends SceneElement {
         opencv_imgproc.putText(
                 frame,
                 text,
-                new Point(position.getLeft(), position.getTop()),
+                new Point(position.getLeft() / 2, position.getTop() / 2),
                 Imgproc.FONT_HERSHEY_SIMPLEX,
                 fontSize,
                 color
