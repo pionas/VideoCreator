@@ -38,7 +38,7 @@ public final class ProjectProperties {
 
         public static final int TOP = 430;
         public static final int BOTTOM = 480;
-        public static final int LEFT = 10;
-        public static final int RIGHT = 10;
+        public static final int LEFT = 30;
+        public static final int RIGHT = 30;
     }
 }
