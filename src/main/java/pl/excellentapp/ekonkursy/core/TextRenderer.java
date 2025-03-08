@@ -110,9 +110,12 @@ public class TextRenderer {
         return textImage;
     }
 
-    private void drawCenteredText(Graphics2D g, String text, int x, int y) {
+    private void drawCenteredText(Graphics2D g, String text, int width, int height) {
         FontMetrics metrics = g.getFontMetrics();
         int textWidth = metrics.stringWidth(text);
-        g.drawString(text, x - textWidth / 2, y);
+        int textHeight = metrics.getHeight();
+        int x = (width - textWidth) / 2;
+        int y = (height - textHeight) / 2 + metrics.getAscent();
+        g.drawString(text, x, y);
     }
 }

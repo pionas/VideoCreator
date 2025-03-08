@@ -8,9 +8,9 @@ public class ElementProvider {
     public static VideoElement createSubscribeElement(int width, int height, int frameRate) {
         return new VideoElement(
                 ProjectProperties.Videos.SUBSCRIBE,
-                new ElementPosition(height - 300, width / 2),
+                new ElementPosition(height - 200, width / 2),
                 2,
-                0,
+                1,
                 frameRate,
                 true,
                 false,
