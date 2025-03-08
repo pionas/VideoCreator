@@ -2,6 +2,7 @@ package pl.excellentapp.ekonkursy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import pl.excellentapp.ekonkursy.article.ArticleApiUrlProvider;
 import pl.excellentapp.ekonkursy.article.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.core.DirectoryCleaner;
@@ -32,7 +33,7 @@ public class VideoCreator {
 
     private static ArticleFetcher getArticleFetcher() {
         JsonDownloader jsonDownloader = getJsonDownloader();
-        return new ArticleFetcher(jsonDownloader);
+        return new ArticleFetcher(jsonDownloader, new ArticleApiUrlProvider());
     }
 
     private static JsonDownloader getJsonDownloader() {

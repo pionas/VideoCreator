@@ -8,6 +8,7 @@ import pl.excellentapp.ekonkursy.projects.LastAddedArticleVideoProjectConfig;
 import pl.excellentapp.ekonkursy.projects.TodayFinishArticleVideoProjectConfig;
 import pl.excellentapp.ekonkursy.projects.TopOfMonthArticleVideoProjectConfig;
 import pl.excellentapp.ekonkursy.projects.TopOfWeekArticleVideoProjectConfig;
+import pl.excellentapp.ekonkursy.projects.WomensDayArticleVideoProjectConfig;
 
 @RequiredArgsConstructor
 public class VideoProjectLoader {

@@ -14,6 +14,10 @@ public class JsonDownloader {
 
     private final ObjectMapper objectMapper;
 
+    public <T> T postJson(String urlString, Class<T> clazz) {
+        return getJson(urlString, "POST", "application/json", clazz);
+    }
+
     public <T> T getJson(String urlString, Class<T> clazz) {
         return getJson(urlString, "GET", "application/json", clazz);
     }

@@ -4,45 +4,42 @@ import lombok.RequiredArgsConstructor;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.article.models.ArticlePage;
 import pl.excellentapp.ekonkursy.core.JsonDownloader;
-import pl.excellentapp.ekonkursy.core.ProjectProperties;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 public class ArticleFetcher {
 
-    private static final String ARTICLE_LAST_ADDED_PATH = "/api/articles/lastAdded";
-    private static final String ARTICLE_TOP_PATH = "/api/statistics/article/top?type=";
-    private static final String ARTICLE_END_PATH = "/api/statistics/article/end-today";
     private final JsonDownloader jsonDownloader;
+    private final ArticleApiUrlProvider apiUrlProvider;
 
     public List<Article> lastAdded() {
-        ArticlePage response = jsonDownloader.getJson(ProjectProperties.EKONKURSY_API_URL + ARTICLE_LAST_ADDED_PATH, ArticlePage.class);
-        if (response == null || !response.hasArticles()) {
-            return List.of();
-        }
-        return response.getData().stream()
-                .filter(Article::hasImage)
-                .toList();
+        return fetchArticles(apiUrlProvider.getLastAddedUrl());
     }
 
     public List<Article> top(String type) {
-        ArticlePage response = jsonDownloader.getJson(ProjectProperties.EKONKURSY_API_URL + ARTICLE_TOP_PATH + type, ArticlePage.class);
-        if (response == null || !response.hasArticles()) {
-            return List.of();
-        }
-        return response.getData().stream()
-                .filter(Article::hasImage)
-                .toList();
+        return fetchArticles(apiUrlProvider.getTopUrl(type));
     }
 
     public List<Article> end() {
-        ArticlePage response = jsonDownloader.getJson(ProjectProperties.EKONKURSY_API_URL + ARTICLE_END_PATH, ArticlePage.class);
-        if (response == null || !response.hasArticles()) {
-            return List.of();
-        }
-        return response.getData().stream()
-                .filter(Article::hasImage)
-                .toList();
+        return fetchArticles(apiUrlProvider.getEndUrl());
+    }
+
+    public List<Article> search(String phrase) {
+        return fetchArticles(apiUrlProvider.getSearchUrl(phrase), true);
+    }
+
+    private List<Article> fetchArticles(String url) {
+        return fetchArticles(url, false);
+    }
+
+    private List<Article> fetchArticles(String url, boolean isPost) {
+        ArticlePage response = isPost
+                ? jsonDownloader.postJson(url, ArticlePage.class)
+                : jsonDownloader.getJson(url, ArticlePage.class);
+
+        return response != null && response.hasArticles()
+                ? response.getData().stream().filter(Article::hasImage).toList()
+                : List.of();
     }
 }
