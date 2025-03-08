@@ -13,8 +13,8 @@ import pl.excellentapp.ekonkursy.scene.builder.SceneBuilder;
 import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
 import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
-import pl.excellentapp.ekonkursy.scene.elements.SceneElement;
 import pl.excellentapp.ekonkursy.scene.elements.VideoElement;
+import pl.excellentapp.ekonkursy.scene.elements.ElementProvider;
 
 import java.awt.Color;
 import java.nio.file.Path;
@@ -103,7 +103,7 @@ public class TopOfMonthArticleVideoProjectConfig implements IVideoProjectConfig 
                 .setWidth(width)
                 .setHeight(height)
                 .addElement(getImageElement(filePath, 2, 0, frameRate, true))
-                .addElement(getVideoElement())
+                .addElement(ElementProvider.createSubscribeElement(width, height, frameRate))
                 .setDuration(2)
                 .build();
     }
@@ -133,20 +133,6 @@ public class TopOfMonthArticleVideoProjectConfig implements IVideoProjectConfig 
                 keepAfterEnd,
                 new Size(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM),
                 true
-        );
-    }
-
-    private SceneElement getVideoElement() {
-        return new VideoElement(
-                ProjectProperties.Videos.SUBSCRIBE,
-                new ElementPosition(height - 300, width / 2),
-                2,
-                0,
-                frameRate,
-                true,
-                false,
-                new Size(width, height),
-                false
         );
     }
 }
