@@ -8,10 +8,13 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,28 +22,27 @@ import static org.mockito.Mockito.when;
 class ImageElementTest {
 
     private final ElementPosition mockPosition = mock(ElementPosition.class);
-    private final Mat mockFrame = mock(Mat.class);
-    private final Path mockFile = mock(Path.class);
+    private final Path file = new File("./images/e-KonkursyInfo.jpg").toPath();
 
     @BeforeEach
     void setUp() {
         when(mockPosition.getLeft()).thenReturn(10);
         when(mockPosition.getTop()).thenReturn(20);
-        when(mockFile.toString()).thenReturn("test-image.jpg");
     }
 
     @ParameterizedTest
     @MethodSource("provideImageElement")
     void testRenderWithinTimeFrame(int currentFrame, int displayDuration, int delay, int fps, boolean keepAfterEnd, int fetchTimes) {
         // given
-        ImageElement imageElement = new ImageElement(mockFile, mockPosition, displayDuration, delay, fps, keepAfterEnd, new Size(100, 100), false);
+        ImageElement imageElement = spy(new ImageElement(file, mockPosition, displayDuration, delay, fps, keepAfterEnd, new Size(100, 100), false));
         SceneMargin sceneMargin = SceneMargin.builder().build();
+        Mat mockFrame = new Mat(100, 100, 16);
 
         // when
         imageElement.render(sceneMargin, mockFrame, currentFrame);
 
         // then
-        verify(mockFile, times(fetchTimes)).toString();
+        verify(imageElement, times(fetchTimes)).addToVideoFrame(any(), any(), any());
     }
 
     private static Stream<Arguments> provideImageElement() {
