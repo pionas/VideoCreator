@@ -7,21 +7,21 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 public class VideoElement extends SceneElement {
 
-    private final File videoFilePath;
+    private final Path videoFilePath;
     private final boolean loop;
     private final boolean keepLastFrame;
     private int totalFrames;
     private boolean initialized = false;
     private final List<Frame> videoFrames = new ArrayList<>();
 
-    public VideoElement(File videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, Size size) {
+    public VideoElement(Path videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, Size size) {
         super(position, displayDuration, delay, fps, size);
         this.videoFilePath = videoFilePath;
         this.loop = loop;
@@ -63,7 +63,7 @@ public class VideoElement extends SceneElement {
     }
 
     private void loadFrames() {
-        try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath)) {
+        try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath.toString())) {
             grabber.setFormat("mp4");
             grabber.start();
             Frame frame;

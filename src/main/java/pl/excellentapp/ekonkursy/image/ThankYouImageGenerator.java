@@ -8,7 +8,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Random;
 import java.util.Set;
 
@@ -37,7 +37,7 @@ public class ThankYouImageGenerator {
         this.imageSaver = new ImageSaver();
     }
 
-    public File generateThankYouImage() {
+    public Path generateThankYouImage() {
         BufferedImage image = new BufferedImage(width, height - 200, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
         setupGraphics(g);

@@ -1,24 +1,30 @@
 package pl.excellentapp.ekonkursy.core;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class DirectoryCleaner {
 
     public void clean() {
-        File directory = new File(ProjectProperties.TEMPORARY_DIRECTORY);
-        if (!directory.exists() || !directory.isDirectory()) {
-            System.out.println("Katalog obrazów nie istnieje lub nie jest katalogiem.");
+        Path directory = ProjectProperties.TEMPORARY_DIRECTORY;
+
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
             return;
         }
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile() && file.delete()) {
-                    System.out.println("Usunięto plik: " + file.getAbsolutePath());
-                } else {
-                    System.err.println("Nie udało się usunąć pliku: " + file.getAbsolutePath());
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+            for (Path file : stream) {
+                if (Files.isRegularFile(file)) {
+                    try {
+                        Files.delete(file);
+                    } catch (IOException ignored) {
+                    }
                 }
             }
+        } catch (IOException ignored) {
         }
     }
 }
+

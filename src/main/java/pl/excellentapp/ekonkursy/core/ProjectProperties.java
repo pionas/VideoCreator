@@ -2,26 +2,43 @@ package pl.excellentapp.ekonkursy.core;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.bytedeco.opencv.opencv_core.Scalar;
+
+import java.nio.file.Path;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ProjectProperties {
 
     public static final String EKONKURSY_API_URL = "https://www.e-konkursy.info";
-    public static final String TEMPORARY_DIRECTORY = "./temp";
-    public static final String OUTPUT_FILE = "output.mp4";
-    public static final String WELCOME_FILE = "./movies/welcome.mp4";
-    public static final String SUBSCRIBE_FILE = "./movies/subscribe.mp4";
-    public static final String WELCOME_IMAGE_FILE = "./e-KonkursyInfo.jpg";
-    public static final String EFFECT_FILE = "./movies/effect.mp4";
-    public static final int WIDTH = 1080;
-    public static final int HEIGHT = 1920;
-    public static final int MARGIN_TOP = 430;
-    public static final int MARGIN_BOTTOM = 480;
-    public static final int MARGIN_LEFT = 10;
-    public static final int MARGIN_RIGHT = 10;
-    public static final int FRAME_RATE = 30;
-    public static final Scalar BACKGROUND_COLOR_BLACK = new Scalar(0, 0, 0, 0);
-    public static final Scalar BACKGROUND_COLOR_WHITE = new Scalar(255, 255, 255, 255);
 
+    public static final Path TEMPORARY_DIRECTORY = Path.of("./temp");
+    public static final Path OUTPUT_FILE = Path.of("output.mp4");
+
+    public static final class Videos {
+
+        public static final Path SUBSCRIBE = Path.of("./movies/subscribe.mp4");
+        public static final Path CONFETTI = Path.of("./movies/confetti.mp4");
+        public static final Path WOMENS_DAY = Path.of("./movies/womens-day.mp4");
+        public static final Path FLUID_GRADIENT = Path.of("./movies/fluid-gradient.mp4");
+        public static final Path EFFECT = Path.of("./movies/effect.mp4");
+    }
+
+    public static final class Images {
+
+        public static final Path WELCOME = Path.of("./images/e-KonkursyInfo.jpg");
+    }
+
+    public static final class VideoSettings {
+
+        public static final int WIDTH = 1080;
+        public static final int HEIGHT = 1920;
+        public static final int FRAME_RATE = 30;
+    }
+
+    public static final class Margins {
+
+        public static final int TOP = 430;
+        public static final int BOTTOM = 480;
+        public static final int LEFT = 10;
+        public static final int RIGHT = 10;
+    }
 }

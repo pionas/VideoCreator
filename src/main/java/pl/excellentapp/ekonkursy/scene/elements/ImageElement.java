@@ -5,15 +5,15 @@ import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
 
-import java.io.File;
+import java.nio.file.Path;
 
 @Getter
 public class ImageElement extends SceneElement {
 
-    private final File filePath;
+    private final Path filePath;
     private final boolean keepAfterEnd;
 
-    public ImageElement(File filePath, ElementPosition position, int displayDuration, int delay, int fps, boolean keepAfterEnd, Size size) {
+    public ImageElement(Path filePath, ElementPosition position, int displayDuration, int delay, int fps, boolean keepAfterEnd, Size size) {
         super(position, displayDuration, delay, fps, size);
         this.filePath = filePath;
         this.keepAfterEnd = keepAfterEnd;
@@ -26,7 +26,7 @@ public class ImageElement extends SceneElement {
             return;
         }
 
-        Mat image = opencv_imgcodecs.imread(filePath.getAbsolutePath());
+        Mat image = opencv_imgcodecs.imread(filePath.toString());
         if (image.empty()) {
             System.err.println("Nie udało się wczytać obrazu: " + filePath);
             return;
