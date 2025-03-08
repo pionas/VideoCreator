@@ -12,9 +12,8 @@ import pl.excellentapp.ekonkursy.scene.SceneConfig;
 import pl.excellentapp.ekonkursy.scene.builder.SceneBuilder;
 import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
-import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
-import pl.excellentapp.ekonkursy.scene.elements.VideoElement;
 import pl.excellentapp.ekonkursy.scene.elements.ElementProvider;
+import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
 
 import java.awt.Color;
 import java.nio.file.Path;
@@ -61,7 +60,7 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setWidth(width)
                 .setHeight(height)
                 .setDuration(durationInSeconds)
-                .addElement(getImageElement(ProjectProperties.Images.WELCOME, durationInSeconds, 0, frameRate, true))
+                .addElement(getImageElement(ProjectProperties.Images.WELCOME, durationInSeconds, 0, frameRate, true, true))
 //                .addElement(new TextElement("Hot tygodnia", new ElementPosition(height - 300, width / 2), durationInSeconds, 0, 20, new Scalar(128, 128, 128, 128), frameRate, new Size(100, 100)))
                 .build();
     }
@@ -73,22 +72,12 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setWidth(width)
                 .setHeight(height)
                 .setSceneMargin(getSceneMargin())
-                .addElement(new VideoElement(
-                        ProjectProperties.Videos.EFFECT,
-                        new ElementPosition(height / 2, width / 2),
-                        displayDuration,
-                        0,
-                        frameRate,
-                        false,
-                        true,
-                        new Size(width, height),
-                        false
-                ))
+                .addElement(ElementProvider.createEffectElement(width, height, frameRate, displayDuration))
                 .setDuration(displayDuration);
 
         articles.forEach(article -> {
             imageDownloader.downloadImages(articles);
-            sceneBuilder.addElement(getImageElement(article.getImageFile().toPath(), 1, delay.getAndIncrement(), frameRate, false));
+            sceneBuilder.addElement(getImageElement(article.getImageFile().toPath(), 1, delay.getAndIncrement(), frameRate, false, true));
         });
         return sceneBuilder.build();
     }
@@ -102,7 +91,7 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setTextColor(Color.BLACK)
                 .setWidth(width)
                 .setHeight(height)
-                .addElement(getImageElement(filePath, 2, 0, frameRate, true))
+                .addElement(getImageElement(filePath, 2, 0, frameRate, true, false))
                 .addElement(ElementProvider.createSubscribeElement(width, height, frameRate))
                 .setDuration(2)
                 .build();
@@ -123,7 +112,7 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .build();
     }
 
-    private ImageElement getImageElement(Path path, int durationInSeconds, int delay, int fps, boolean keepAfterEnd) {
+    private ImageElement getImageElement(Path path, int durationInSeconds, int delay, int fps, boolean keepAfterEnd, boolean considerMargins) {
         return new ImageElement(
                 path,
                 new ElementPosition(height / 2, width / 2),
@@ -132,7 +121,7 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 fps,
                 keepAfterEnd,
                 new Size(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM),
-                true
+                considerMargins
         );
     }
 }

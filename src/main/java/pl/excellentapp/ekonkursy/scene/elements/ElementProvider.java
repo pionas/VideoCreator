@@ -14,7 +14,7 @@ public class ElementProvider {
                 frameRate,
                 true,
                 false,
-                new Size(1000, 300),
+                new Size(530, 300),
                 false
         );
     }
@@ -37,11 +37,11 @@ public class ElementProvider {
         return new VideoElement(
                 ProjectProperties.Videos.CONFETTI,
                 new ElementPosition(height / 2, width / 2),
-                3,
+                6,
                 0,
                 frameRate,
-                false,
                 true,
+                false,
                 new Size(width, height),
                 false
         );

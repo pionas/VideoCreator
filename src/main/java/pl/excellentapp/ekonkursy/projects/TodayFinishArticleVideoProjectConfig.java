@@ -73,17 +73,7 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
                 .setWidth(width)
                 .setHeight(height)
                 .setSceneMargin(getSceneMargin())
-                .addElement(new VideoElement(
-                        ProjectProperties.Videos.EFFECT,
-                        new ElementPosition(height / 2, width / 2),
-                        displayDuration,
-                        0,
-                        frameRate,
-                        false,
-                        true,
-                        new Size(width, height),
-                        false
-                ))
+                .addElement(ElementProvider.createEffectElement(width, height, frameRate, displayDuration))
                 .setDuration(displayDuration);
 
         articles.forEach(article -> {

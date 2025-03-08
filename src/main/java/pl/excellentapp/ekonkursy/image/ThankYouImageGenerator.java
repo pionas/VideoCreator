@@ -38,12 +38,12 @@ public class ThankYouImageGenerator {
     }
 
     public Path generateThankYouImage() {
-        BufferedImage image = new BufferedImage(width, height - 200, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
         setupGraphics(g);
         drawBackground(g);
         textRenderer.drawText(g, "Podziękowania dla:", width / 2, height / 5, textColor);
-        textRenderer.drawNames(g, names, width, height - 200, textColor);
+        textRenderer.drawNames(g, names, width, height - 400, textColor);
         g.dispose();
         return imageSaver.saveImage(image, "thank_you.png");
     }

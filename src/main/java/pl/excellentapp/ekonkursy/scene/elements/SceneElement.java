@@ -62,6 +62,8 @@ public abstract class SceneElement {
             maxWidth = Math.min(availableLeft - margin.getLeft(), availableRight - margin.getRight()) * 2;
             maxHeight = Math.min(availableTop - margin.getTop(), availableBottom - margin.getBottom()) * 2;
         }
+        maxWidth = Math.min(maxWidth, size.width());
+        maxHeight = Math.min(maxHeight, size.height());
 
         double scaleX = (double) maxWidth / imgWidth;
         double scaleY = (double) maxHeight / imgHeight;

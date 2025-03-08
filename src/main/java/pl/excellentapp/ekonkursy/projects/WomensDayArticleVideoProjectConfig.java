@@ -92,7 +92,7 @@ public class WomensDayArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setTextColor(Color.BLACK)
                 .setWidth(width)
                 .setHeight(height)
-                .addElement(getImageElement(filePath, 2, 0, frameRate, true))
+                .addElement(getImageElement(filePath, 0, 0, frameRate, true))
                 .addElement(ElementProvider.createSubscribeElement(width, height, frameRate))
                 .setDuration(2)
                 .build();
