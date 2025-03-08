@@ -5,6 +5,7 @@ import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.opencv.imgproc.Imgproc;
 
 @Getter
@@ -14,8 +15,8 @@ public class TextElement extends SceneElement {
     private final int fontSize;
     private final Scalar color;
 
-    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Scalar color, int fps) {
-        super(position, displayDuration, delay, fps);
+    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Scalar color, int fps, Size size) {
+        super(position, displayDuration, delay, fps, size);
         this.text = text;
         this.fontSize = fontSize;
         this.color = color;

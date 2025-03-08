@@ -3,43 +3,31 @@ package pl.excellentapp.ekonkursy.scene.elements;
 import lombok.Getter;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.Java2DFrameConverter;
-import org.bytedeco.opencv.global.opencv_core;
-import org.bytedeco.opencv.global.opencv_imgproc;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-public class VideoElement extends SceneElement implements AutoCloseable {
+public class VideoElement extends SceneElement {
 
     private final File videoFilePath;
     private final boolean loop;
     private final boolean keepLastFrame;
-    private FFmpegFrameGrabber grabber;
     private int totalFrames;
     private boolean initialized = false;
+    private final List<Frame> videoFrames = new ArrayList<>();
 
-    public VideoElement(File videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame) {
-        super(position, displayDuration, delay, fps);
+    public VideoElement(File videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, Size size) {
+        super(position, displayDuration, delay, fps, size);
         this.videoFilePath = videoFilePath;
         this.loop = loop;
         this.keepLastFrame = keepLastFrame;
-        initGrabber();
+        loadFrames();
     }
-
-    VideoElement(File videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, FFmpegFrameGrabber grabber) {
-        super(position, displayDuration, delay, fps);
-        this.videoFilePath = videoFilePath;
-        this.loop = loop;
-        this.keepLastFrame = keepLastFrame;
-        this.grabber = grabber;
-        this.totalFrames = grabber.getLengthInFrames();
-        this.initialized = true;
-    }
-
 
     @Override
     public void render(Mat frame, int currentFrame) {
@@ -50,57 +38,46 @@ public class VideoElement extends SceneElement implements AutoCloseable {
             return;
         }
         int frameIndex = currentFrame - frameStart;
-        if (frameIndex > totalFrames) {
+        if (frameIndex >= videoFrames.size()) {
             if (loop) {
-                frameIndex %= totalFrames;
+                frameIndex %= videoFrames.size();
             } else if (!keepLastFrame) {
                 return;
             } else {
-                frameIndex = totalFrames - 1;
+                frameIndex = videoFrames.size() - 1;
             }
         }
 
         try {
-            grabber.setFrameNumber(frameIndex);
-            Frame videoFrame = grabber.grabImage();
+            Frame videoFrame = videoFrames.get(frameIndex);
             if (videoFrame != null) {
-                try (Java2DFrameConverter converter = new Java2DFrameConverter()) {
-                    BufferedImage img = converter.getBufferedImage(videoFrame);
-                    Mat videoMat = new Mat(img.getHeight(), img.getWidth(), opencv_core.CV_8UC3);
-                    opencv_imgproc.resize(videoMat, videoMat, new Size(frame.cols(), frame.rows()));
-                    videoMat.copyTo(frame);
+                try (OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
+                    Mat image = converter.convert(videoFrame);
+                    addToVideoFrame(frame, image);
                 }
             }
         } catch (Exception e) {
             System.err.println("Błąd podczas odtwarzania klatki wideo: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
-    public void close() {
-        try {
-            if (grabber != null) {
-                grabber.stop();
-                grabber.release();
-            }
-        } catch (Exception e) {
-            System.err.println("Błąd przy zamykaniu grabbera: " + e.getMessage());
-        }
-    }
-
-    private void initGrabber() {
-        try {
-            grabber = new FFmpegFrameGrabber(videoFilePath);
+    private void loadFrames() {
+        try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath)) {
             grabber.setFormat("mp4");
             grabber.start();
-            extracted();
+            Frame frame;
+            while ((frame = grabber.grabImage()) != null) {
+                videoFrames.add(frame.clone());
+            }
+            totalFrames = videoFrames.size();
+            grabber.stop();
+            grabber.release();
+            initialized = true;
         } catch (Exception e) {
-            System.err.println("Nie udało się załadować wideo: " + e.getMessage());
+            System.err.println("Błąd podczas wczytywania klatek: " + e.getMessage());
             initialized = false;
+            throw new RuntimeException(e);
         }
-    }
-
-    private void extracted() {
-        totalFrames = grabber.getLengthInFrames();
-        initialized = true;
     }
 }

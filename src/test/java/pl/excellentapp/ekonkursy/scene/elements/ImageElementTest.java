@@ -1,6 +1,7 @@
 package pl.excellentapp.ekonkursy.scene.elements;
 
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,7 +32,7 @@ class ImageElementTest {
     @MethodSource("provideImageElement")
     void testRenderWithinTimeFrame(int currentFrame, int displayDuration, int delay, int fps, boolean keepAfterEnd, int fetchTimes) {
         // given
-        ImageElement imageElement = new ImageElement(mockFile, mockPosition, displayDuration, delay, fps, keepAfterEnd);
+        ImageElement imageElement = new ImageElement(mockFile, mockPosition, displayDuration, delay, fps, keepAfterEnd, new Size(100, 100));
 
         // when
         imageElement.render(mockFrame, currentFrame);

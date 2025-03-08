@@ -1,39 +1,44 @@
 package pl.excellentapp.ekonkursy.projects;
 
-import pl.excellentapp.ekonkursy.ExecutionMode;
+import org.bytedeco.opencv.opencv_core.Size;
 import pl.excellentapp.ekonkursy.IVideoProjectConfig;
 import pl.excellentapp.ekonkursy.VideoProjectConfig;
 import pl.excellentapp.ekonkursy.article.ArticleFetcher;
-import pl.excellentapp.ekonkursy.article.ArticleImageService;
+import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.core.ProjectProperties;
 import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
-import pl.excellentapp.ekonkursy.scene.Scene;
+import pl.excellentapp.ekonkursy.scene.SceneConfig;
+import pl.excellentapp.ekonkursy.scene.builder.SceneBuilder;
+import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
-import pl.excellentapp.ekonkursy.scene.elements.ElementSize;
-import pl.excellentapp.ekonkursy.scene.screens.ImageConfig;
-import pl.excellentapp.ekonkursy.scene.screens.ImageMovieScene;
-import pl.excellentapp.ekonkursy.scene.screens.Order;
-import pl.excellentapp.ekonkursy.scene.screens.VideoConfig;
+import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
+import pl.excellentapp.ekonkursy.scene.elements.SceneElement;
+import pl.excellentapp.ekonkursy.scene.elements.VideoElement;
 
+import java.awt.Color;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static pl.excellentapp.ekonkursy.core.ProjectProperties.MARGIN_BOTTOM;
+import static pl.excellentapp.ekonkursy.core.ProjectProperties.MARGIN_LEFT;
+import static pl.excellentapp.ekonkursy.core.ProjectProperties.MARGIN_RIGHT;
+import static pl.excellentapp.ekonkursy.core.ProjectProperties.MARGIN_TOP;
 import static pl.excellentapp.ekonkursy.core.ProjectProperties.WELCOME_IMAGE_FILE;
 
 public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig {
 
-    private final ArticleImageService imageService;
+    private final ArticleImageDownloader imageDownloader;
     private final List<Article> articles;
     private final int width;
     private final int height;
     private final int frameRate;
 
-    public TodayFinishArticleVideoProjectConfig(ArticleImageService imageService, ArticleFetcher articleFetcher) {
-        this.imageService = imageService;
+    public TodayFinishArticleVideoProjectConfig(ArticleImageDownloader imageDownloader, ArticleFetcher articleFetcher) {
+        this.imageDownloader = imageDownloader;
         this.articles = articleFetcher.end();
         this.width = ProjectProperties.WIDTH;
         this.height = ProjectProperties.HEIGHT;
@@ -54,69 +59,56 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
         );
     }
 
-    private Scene createWelcomeScreen() {
-        return ImageMovieScene.builder()
-                .targetWidth(width)
-                .targetHeight(height)
-                .background(ProjectProperties.BACKGROUND_COLOR_WHITE)
-                .images(List.of(
-                        ImageConfig.builder()
-                                .file(new File(WELCOME_IMAGE_FILE))
-                                .frames(30)
-                                .elementPosition(new ElementPosition(height / 2, width / 2))
-                                .build()
-                ))
-                .maxFrames(30)
+    private SceneConfig createWelcomeScreen() {
+        int durationInSeconds = 2;
+        return new SceneBuilder()
+                .setBackgroundColor(Color.WHITE)
+                .setTextColor(Color.BLACK)
+                .setWidth(width)
+                .setHeight(height)
+                .setDuration(durationInSeconds)
+                .addElement(getImageElement(new File(WELCOME_IMAGE_FILE), durationInSeconds, 0, frameRate, true))
                 .build();
     }
 
-    private Scene createListOfArticleScreen() {
+    private SceneConfig createListOfArticleScreen() {
         AtomicInteger delay = new AtomicInteger();
-        List<ImageConfig> imagesFromArticles = imageService.getImageConfigs(articles, delay, width, height);
-        return ImageMovieScene.builder()
-                .targetWidth(width)
-                .targetHeight(height)
-                .background(ProjectProperties.BACKGROUND_COLOR_WHITE)
-                .images(imagesFromArticles)
-                .videos(List.of(
-                        VideoConfig.builder()
-                                .file(new File(ProjectProperties.EFFECT_FILE))
-                                .loop(false)
-                                .executionMode(ExecutionMode.NON_BLOCKING)
-                                .elementPosition(new ElementPosition(height / 2, width / 2))
-                                .order(Order.START)
-                                .delayFrames(0)
-                                .build()
+        int displayDuration = articles.size();
+        SceneBuilder sceneBuilder = new SceneBuilder()
+                .setWidth(width)
+                .setHeight(height)
+                .setSceneMargin(getSceneMargin())
+                .addElement(new VideoElement(
+                        new File(ProjectProperties.EFFECT_FILE),
+                        new ElementPosition(height / 2, width / 2),
+                        displayDuration,
+                        0,
+                        frameRate,
+                        false,
+                        true,
+                        new Size(width, height)
                 ))
-                .maxFrames((imagesFromArticles.size() * delay.get() + frameRate))
-                .build();
+                .setDuration(displayDuration);
+
+        articles.forEach(article -> {
+            imageDownloader.downloadImages(articles);
+            sceneBuilder.addElement(getImageElement(article.getImageFile(), 1, delay.getAndIncrement(), frameRate, false));
+        });
+        return sceneBuilder.build();
     }
 
-    public Scene createThankYouScreen() {
+    public SceneConfig createThankYouScreen() {
         Set<String> thankYouNames = getUsernameToThankYou(articles);
         File file = new ThankYouImageGenerator(thankYouNames, width, height).generateThankYouImage();
 
-        return ImageMovieScene.builder()
-                .targetWidth(width)
-                .targetHeight(height)
-                .background(ProjectProperties.BACKGROUND_COLOR_WHITE)
-                .images(List.of(ImageConfig.builder()
-                        .file(file)
-                        .frames(frameRate * 3)
-                        .elementPosition(new ElementPosition(height / 2, width / 2))
-                        .build()))
-                .videos(List.of(
-                        VideoConfig.builder()
-                                .file(new File(ProjectProperties.SUBSCRIBE_FILE))
-                                .loop(true)
-                                .executionMode(ExecutionMode.NON_BLOCKING)
-                                .elementPosition(new ElementPosition(height - 300, width / 2))
-                                .size(ElementSize.builder().maxWidth(200).maxHeight(200).build())
-                                .order(Order.END)
-                                .delayFrames(0)
-                                .build()
-                ))
-                .maxFrames(frameRate * 3)
+        return new SceneBuilder()
+                .setBackgroundColor(Color.WHITE)
+                .setTextColor(Color.BLACK)
+                .setWidth(width)
+                .setHeight(height)
+                .addElement(getImageElement(file, 2, 0, frameRate, true))
+                .addElement(getVideoElement())
+                .setDuration(2)
                 .build();
     }
 
@@ -124,5 +116,39 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
         return articles.stream()
                 .map(Article::getUserName)
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private SceneMargin getSceneMargin() {
+        return SceneMargin.builder()
+                .top(ProjectProperties.MARGIN_TOP)
+                .right(ProjectProperties.MARGIN_RIGHT)
+                .bottom(ProjectProperties.MARGIN_BOTTOM)
+                .left(ProjectProperties.MARGIN_LEFT)
+                .build();
+    }
+
+    private ImageElement getImageElement(File file, int durationInSeconds, int delay, int fps, boolean keepAfterEnd) {
+        return new ImageElement(
+                file,
+                new ElementPosition(height / 2, width / 2),
+                durationInSeconds,
+                delay,
+                fps,
+                keepAfterEnd,
+                new Size(width - MARGIN_LEFT - MARGIN_RIGHT, height - MARGIN_TOP - MARGIN_BOTTOM)
+        );
+    }
+
+    private SceneElement getVideoElement() {
+        return new VideoElement(
+                new File(ProjectProperties.SUBSCRIBE_FILE),
+                new ElementPosition(height - 300, width / 2),
+                2,
+                0,
+                frameRate,
+                true,
+                false,
+                new Size(width, height)
+        );
     }
 }
