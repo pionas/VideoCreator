@@ -11,8 +11,8 @@ public class SceneBuilder {
 
     private int width = 1920;
     private int height = 1080;
-    private Color backgroundColor = Color.BLACK;
-    private Color textColor = Color.WHITE;
+    private Color backgroundColor = Color.WHITE;
+    private Color textColor = Color.BLACK;
     private int durationInSeconds = 5;
     private SceneMargin margin = SceneMargin.builder().build();
     private final List<SceneElement> elements = new ArrayList<>();

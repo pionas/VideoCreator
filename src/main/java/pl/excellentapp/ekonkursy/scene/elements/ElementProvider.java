@@ -54,8 +54,22 @@ public class ElementProvider {
                 displayDuration,
                 0,
                 frameRate,
-                true,
                 false,
+                true,
+                new Size(width, height),
+                false
+        );
+    }
+
+    public static SceneElement createFluidGradientElement(int width, int height, int frameRate, int displayDuration) {
+        return new VideoElement(
+                ProjectProperties.Videos.FLUID_GRADIENT,
+                new ElementPosition(height / 2, width / 2),
+                displayDuration,
+                0,
+                frameRate,
+                false,
+                true,
                 new Size(width, height),
                 false
         );

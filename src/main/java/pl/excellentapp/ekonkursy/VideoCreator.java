@@ -8,6 +8,7 @@ import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.core.DirectoryCleaner;
 import pl.excellentapp.ekonkursy.core.FileDownloader;
 import pl.excellentapp.ekonkursy.core.JsonDownloader;
+import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.scene.SceneRenderer;
 import pl.excellentapp.ekonkursy.utills.VideoProjectLoader;
 
@@ -16,6 +17,7 @@ public class VideoCreator {
     public static void main(String[] args) {
         VideoProjectLoader videoProjectLoader = new VideoProjectLoader(
                 getArticleImageDownloader(),
+                getImageProcessor(),
                 getArticleFetcher()
         );
 
@@ -29,6 +31,10 @@ public class VideoCreator {
     private static ArticleImageDownloader getArticleImageDownloader() {
         FileDownloader fileDownloader = new FileDownloader();
         return new ArticleImageDownloader(fileDownloader);
+    }
+
+    private static ImageProcessor getImageProcessor() {
+        return new ImageProcessor();
     }
 
     private static ArticleFetcher getArticleFetcher() {

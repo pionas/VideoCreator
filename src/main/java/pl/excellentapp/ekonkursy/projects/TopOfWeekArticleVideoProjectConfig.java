@@ -7,6 +7,7 @@ import pl.excellentapp.ekonkursy.article.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.core.ProjectProperties;
+import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
 import pl.excellentapp.ekonkursy.scene.builder.SceneBuilder;
@@ -25,13 +26,15 @@ import java.util.stream.Collectors;
 public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
 
     private final ArticleImageDownloader imageDownloader;
+    private final ImageProcessor imageProcessor;
     private final List<Article> articles;
     private final int width;
     private final int height;
     private final int frameRate;
 
-    public TopOfWeekArticleVideoProjectConfig(ArticleImageDownloader imageDownloader, ArticleFetcher articleFetcher) {
+    public TopOfWeekArticleVideoProjectConfig(ArticleImageDownloader imageDownloader, ImageProcessor imageProcessor, ArticleFetcher articleFetcher) {
         this.imageDownloader = imageDownloader;
+        this.imageProcessor = imageProcessor;
         this.articles = articleFetcher.top("week");
         this.width = ProjectProperties.VideoSettings.WIDTH;
         this.height = ProjectProperties.VideoSettings.HEIGHT;
@@ -68,17 +71,19 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
     private SceneConfig createListOfArticleScreen() {
         AtomicInteger delay = new AtomicInteger();
         int displayDuration = articles.size();
+        Color backgroundColor = Color.WHITE;
+        Color textColor = Color.BLACK;
         SceneBuilder sceneBuilder = new SceneBuilder()
                 .setWidth(width)
                 .setHeight(height)
+                .setBackgroundColor(backgroundColor)
+                .setTextColor(textColor)
                 .setSceneMargin(getSceneMargin())
                 .addElement(ElementProvider.createEffectElement(width, height, frameRate, displayDuration))
                 .setDuration(displayDuration);
-
-        articles.forEach(article -> {
-            imageDownloader.downloadImages(articles);
-            sceneBuilder.addElement(getImageElement(article.getImageFile().toPath(), 1, delay.getAndIncrement(), frameRate, false, true));
-        });
+        imageDownloader.downloadImages(articles);
+        articles.forEach(article -> imageProcessor.applyBackground(article.getImageFile().toPath(), backgroundColor));
+        articles.forEach(article -> sceneBuilder.addElement(getImageElement(article.getImageFile().toPath(), 1, delay.getAndIncrement(), frameRate, false, true)));
         return sceneBuilder.build();
     }
 
