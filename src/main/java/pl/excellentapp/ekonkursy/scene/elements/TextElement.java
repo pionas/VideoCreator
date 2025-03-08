@@ -7,6 +7,7 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
 import org.opencv.imgproc.Imgproc;
+import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
 @Getter
 public class TextElement extends SceneElement {
@@ -15,15 +16,15 @@ public class TextElement extends SceneElement {
     private final int fontSize;
     private final Scalar color;
 
-    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Scalar color, int fps, Size size) {
-        super(position, displayDuration, delay, fps, size);
+    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Scalar color, int fps, Size size, boolean considerMargins) {
+        super(position, displayDuration, delay, fps, size, considerMargins);
         this.text = text;
         this.fontSize = fontSize;
         this.color = color;
     }
 
     @Override
-    public void render(Mat frame, int currentFrame) {
+    public void render(SceneMargin margin, Mat frame, int currentFrame) {
         if (currentFrame < frameStart || currentFrame > frameEnd) {
             return;
         }

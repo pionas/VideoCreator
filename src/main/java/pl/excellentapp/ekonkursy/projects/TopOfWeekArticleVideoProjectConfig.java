@@ -81,7 +81,8 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                         frameRate,
                         false,
                         true,
-                        new Size(width, height)
+                        new Size(width, height),
+                        false
                 ))
                 .setDuration(displayDuration);
 
@@ -130,7 +131,8 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 delay,
                 fps,
                 keepAfterEnd,
-                new Size(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM)
+                new Size(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM),
+                true
         );
     }
 
@@ -143,7 +145,8 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 frameRate,
                 true,
                 false,
-                new Size(width, height)
+                new Size(width, height),
+                false
         );
     }
 }

@@ -6,8 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
@@ -19,26 +20,27 @@ class ImageElementTest {
 
     private final ElementPosition mockPosition = mock(ElementPosition.class);
     private final Mat mockFrame = mock(Mat.class);
-    private final File mockFile = mock(File.class);
+    private final Path mockFile = mock(Path.class);
 
     @BeforeEach
     void setUp() {
         when(mockPosition.getLeft()).thenReturn(10);
         when(mockPosition.getTop()).thenReturn(20);
-        when(mockFile.getAbsolutePath()).thenReturn("test-image.jpg");
+        when(mockFile.toString()).thenReturn("test-image.jpg");
     }
 
     @ParameterizedTest
     @MethodSource("provideImageElement")
     void testRenderWithinTimeFrame(int currentFrame, int displayDuration, int delay, int fps, boolean keepAfterEnd, int fetchTimes) {
         // given
-        ImageElement imageElement = new ImageElement(mockFile, mockPosition, displayDuration, delay, fps, keepAfterEnd, new Size(100, 100));
+        ImageElement imageElement = new ImageElement(mockFile, mockPosition, displayDuration, delay, fps, keepAfterEnd, new Size(100, 100), false);
+        SceneMargin sceneMargin = SceneMargin.builder().build();
 
         // when
-        imageElement.render(mockFrame, currentFrame);
+        imageElement.render(sceneMargin, mockFrame, currentFrame);
 
         // then
-        verify(mockFile, times(fetchTimes)).getAbsolutePath();
+        verify(mockFile, times(fetchTimes)).toString();
     }
 
     private static Stream<Arguments> provideImageElement() {

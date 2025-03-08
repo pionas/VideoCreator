@@ -5,6 +5,7 @@ import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Size;
+import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
 @Getter
 public abstract class SceneElement {
@@ -13,18 +14,20 @@ public abstract class SceneElement {
     protected final int frameStart;
     protected final int frameEnd;
     protected final Size size;
+    protected final boolean considerMargins;
 
-    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, Size size) {
+    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, Size size, boolean considerMargins) {
         this.position = position;
         this.frameStart = delay * fps;
         this.frameEnd = this.frameStart + (displayDuration * fps);
         this.size = size;
+        this.considerMargins = considerMargins;
     }
 
-    public abstract void render(Mat frame, int currentFrame);
+    public abstract void render(SceneMargin margin, Mat frame, int currentFrame);
 
-    protected void addToVideoFrame(Mat frame, Mat image) {
-        Mat resizedImage = getResizedImage(image, frame);
+    protected void addToVideoFrame(SceneMargin margin, Mat frame, Mat image) {
+        Mat resizedImage = getResizedImage(margin, image, frame);
         try {
             int left = position.getLeft() - (resizedImage.cols() / 2);
             int top = position.getTop() - (resizedImage.rows() / 2);
@@ -41,7 +44,7 @@ public abstract class SceneElement {
         }
     }
 
-    private Mat getResizedImage(Mat image, Mat frame) {
+    private Mat getResizedImage(SceneMargin margin, Mat image, Mat frame) {
         int frameWidth = frame.cols();
         int frameHeight = frame.rows();
 
@@ -55,6 +58,10 @@ public abstract class SceneElement {
 
         int maxWidth = Math.min(availableLeft, availableRight) * 2;
         int maxHeight = Math.min(availableTop, availableBottom) * 2;
+        if (considerMargins) {
+            maxWidth = Math.min(availableLeft - margin.getLeft(), availableRight - margin.getRight()) * 2;
+            maxHeight = Math.min(availableTop - margin.getTop(), availableBottom - margin.getBottom()) * 2;
+        }
 
         double scaleX = (double) maxWidth / imgWidth;
         double scaleY = (double) maxHeight / imgHeight;

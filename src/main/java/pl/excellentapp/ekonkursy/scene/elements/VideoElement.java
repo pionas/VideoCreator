@@ -6,6 +6,7 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
+import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,8 +22,8 @@ public class VideoElement extends SceneElement {
     private boolean initialized = false;
     private final List<Frame> videoFrames = new ArrayList<>();
 
-    public VideoElement(Path videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, Size size) {
-        super(position, displayDuration, delay, fps, size);
+    public VideoElement(Path videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, Size size, boolean considerMargins) {
+        super(position, displayDuration, delay, fps, size, considerMargins);
         this.videoFilePath = videoFilePath;
         this.loop = loop;
         this.keepLastFrame = keepLastFrame;
@@ -30,7 +31,7 @@ public class VideoElement extends SceneElement {
     }
 
     @Override
-    public void render(Mat frame, int currentFrame) {
+    public void render(SceneMargin margin, Mat frame, int currentFrame) {
         if (!initialized || currentFrame < frameStart) {
             return;
         }
@@ -53,7 +54,7 @@ public class VideoElement extends SceneElement {
             if (videoFrame != null) {
                 try (OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
                     Mat image = converter.convert(videoFrame);
-                    addToVideoFrame(frame, image);
+                    addToVideoFrame(margin, frame, image);
                 }
             }
         } catch (Exception e) {
