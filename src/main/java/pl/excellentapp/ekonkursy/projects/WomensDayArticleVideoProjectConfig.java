@@ -100,7 +100,7 @@ public class WomensDayArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setHeight(height)
                 .addElement(getImageElement(filePath, 0, 0, frameRate, true))
                 .addElement(ElementProvider.createSubscribeElement(width, height, frameRate))
-                .setDuration(2)
+                .setDuration(4)
                 .build();
     }
 

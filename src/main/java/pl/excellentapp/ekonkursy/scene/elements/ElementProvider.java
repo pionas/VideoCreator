@@ -8,7 +8,7 @@ public class ElementProvider {
         return new VideoElement(
                 ProjectProperties.Videos.SUBSCRIBE,
                 new ElementPosition(height - 200, width / 2),
-                2,
+                1,
                 1,
                 frameRate,
                 true,
