@@ -19,6 +19,34 @@ public class ElementProvider {
         );
     }
 
+    public static SceneElement createWomensDayElement(int width, int height, int frameRate) {
+        return new VideoElement(
+                ProjectProperties.Videos.WOMENS_DAY,
+                new ElementPosition(height / 2, width / 2),
+                3,
+                0,
+                frameRate,
+                false,
+                true,
+                new Size(width, height),
+                false
+        );
+    }
+
+    public static SceneElement createConfettiElement(int width, int height, int frameRate) {
+        return new VideoElement(
+                ProjectProperties.Videos.CONFETTI,
+                new ElementPosition(height / 2, width / 2),
+                3,
+                0,
+                frameRate,
+                false,
+                true,
+                new Size(width, height),
+                false
+        );
+    }
+
     public static SceneElement createEffectElement(int width, int height, int frameRate, int displayDuration) {
         return new VideoElement(
                 ProjectProperties.Videos.EFFECT,

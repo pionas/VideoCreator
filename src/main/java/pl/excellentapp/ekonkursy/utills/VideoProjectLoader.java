@@ -23,6 +23,7 @@ public class VideoProjectLoader {
         return switch (args[0]) {
             case "lastAdded" -> new LastAddedArticleVideoProjectConfig(imageDownloader, articleFetcher);
             case "topWeek" -> new TopOfWeekArticleVideoProjectConfig(imageDownloader, articleFetcher);
+            case "womens" -> new WomensDayArticleVideoProjectConfig(imageDownloader, articleFetcher);
             case "topMonth" -> new TopOfMonthArticleVideoProjectConfig(imageDownloader, articleFetcher);
             case "todayFinish" -> new TodayFinishArticleVideoProjectConfig(imageDownloader, articleFetcher);
             default -> throw new IllegalArgumentException("Unknown project type: " + args[0]);
