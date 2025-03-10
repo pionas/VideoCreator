@@ -79,10 +79,7 @@ jobs:
           FILENAME="$VIDEO_TYPE_${TIMESTAMP}.mp4"
           mv ./movie.mp4 ./output/$FILENAME
 
-      - name: Commit and Push Video
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add ./output/$FILENAME
-          git commit -m "Add video: $FILENAME"
-          git push
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: './output/$FILENAME'
+          message: 'Add video: $FILENAME'
