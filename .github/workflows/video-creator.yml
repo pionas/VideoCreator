@@ -58,22 +58,23 @@ jobs:
 
             echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
           fi
-          echo "Selected video type:${{ env.VIDEO_TYPE }}"
+          echo "Selected video type:$VIDEO_TYPE"
 
       - name: Run VideoCreator
         run: |
           mkdir -p output
-          java -jar target/*.jar "${{ env.VIDEO_TYPE }}"
+          java -jar target/*.jar "$VIDEO_TYPE"
 
       - name: Rename and Move Video
         run: |
           TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
-          mv ./movie.mp4 ./output/${{ env.VIDEO_TYPE }}_${TIMESTAMP}.mp4
+          FILENAME="$VIDEO_TYPE_${TIMESTAMP}.mp4"
+          mv ./movie.mp4 ./output/$FILENAME
 
       - name: Commit and Push Video
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add ./output/${{ env.VIDEO_TYPE }}.mp4
-          git commit -m "Add video: ${{ env.VIDEO_TYPE }}"
+          git add ./output/$FILENAME
+          git commit -m "Add video: $FILENAME"
           git push
