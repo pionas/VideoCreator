@@ -1,6 +1,7 @@
 package pl.excellentapp.ekonkursy.scene.elements;
 
 import lombok.Getter;
+import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
@@ -8,8 +9,6 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class VideoElement extends SceneElement {
@@ -17,9 +16,8 @@ public class VideoElement extends SceneElement {
     private final Path videoFilePath;
     private final boolean loop;
     private final boolean keepLastFrame;
-    private int totalFrames;
+    private int totalFrames = 0;
     private boolean initialized = false;
-    private final List<Frame> videoFrames = new ArrayList<>();
 
     public VideoElement(Path videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, ElementSize size, boolean considerMargins) {
         super(position, displayDuration, delay, fps, size, considerMargins);
@@ -38,27 +36,31 @@ public class VideoElement extends SceneElement {
             return;
         }
         int frameIndex = currentFrame - frameStart;
-        if (frameIndex >= videoFrames.size()) {
+        if (frameIndex >= totalFrames) {
             if (loop) {
-                frameIndex %= videoFrames.size();
+                frameIndex %= totalFrames;
             } else if (!keepLastFrame) {
                 return;
             } else {
-                frameIndex = videoFrames.size() - 1;
+                frameIndex = totalFrames - 1;
             }
         }
 
-        try {
-            Frame videoFrame = videoFrames.get(frameIndex);
+        try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath.toString())) {
+            grabber.setFormat("mp4");
+            grabber.setVideoCodec(avcodec.AV_CODEC_ID_H264);
+            grabber.start();
+            grabber.setFrameNumber(frameIndex);
+            Frame videoFrame = grabber.grabImage();
             if (videoFrame != null) {
                 try (OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
                     Mat image = converter.convert(videoFrame);
                     addToVideoFrame(config, frame, image, currentFrame);
                 }
             }
+            grabber.stop();
         } catch (Exception e) {
-            System.err.println("Błąd podczas odtwarzania klatki wideo: " + e.getMessage());
-            throw new RuntimeException(e);
+            System.err.println("Błąd odtwarzania wideo: " + e.getMessage());
         }
     }
 
@@ -66,11 +68,9 @@ public class VideoElement extends SceneElement {
         try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath.toString())) {
             grabber.setFormat("mp4");
             grabber.start();
-            Frame frame;
-            while ((frame = grabber.grabImage()) != null) {
-                videoFrames.add(frame.clone());
+            while (grabber.grabImage() != null) {
+                totalFrames++;
             }
-            totalFrames = videoFrames.size();
             grabber.stop();
             grabber.release();
             initialized = true;
