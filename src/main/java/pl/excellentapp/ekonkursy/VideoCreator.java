@@ -13,22 +13,19 @@ import pl.excellentapp.ekonkursy.image.ImageStripGenerator;
 import pl.excellentapp.ekonkursy.scene.SceneRenderer;
 import pl.excellentapp.ekonkursy.utills.VideoProjectLoader;
 
-import java.io.IOException;
-
 public class VideoCreator {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         VideoProjectLoader videoProjectLoader = new VideoProjectLoader(
                 getArticleImageDownloader(),
                 getImageProcessor(),
-                getArticleFetcher()
+                getArticleFetcher(),
+                new ImageStripGenerator()
         );
 
         VideoProjectConfig videoProjectConfig = videoProjectLoader.loadProject(args).toVideoProjectConfig();
         SceneRenderer sceneRenderer = new SceneRenderer(videoProjectConfig.getFrameRate(), videoProjectConfig.getWidth(), videoProjectConfig.getHeight());
         sceneRenderer.renderScenes(videoProjectConfig.getSceneConfigs(), "./movie.mp4");
-        ImageStripGenerator imageStripGenerator = new ImageStripGenerator();
-        imageStripGenerator.createFilmStrip("./imagestrip.jpg");
         new DirectoryCleaner().clean();
     }
 

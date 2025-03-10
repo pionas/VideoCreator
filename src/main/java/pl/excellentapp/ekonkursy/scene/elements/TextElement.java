@@ -5,13 +5,15 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import org.opencv.core.CvType;
 import pl.excellentapp.ekonkursy.core.FontLoader;
 import pl.excellentapp.ekonkursy.core.TextRenderer;
-import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
+import pl.excellentapp.ekonkursy.scene.SceneConfig;
+import pl.excellentapp.ekonkursy.scene.effects.SceneEffect;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.List;
 
 @Getter
 public class TextElement extends SceneElement {
@@ -29,15 +31,23 @@ public class TextElement extends SceneElement {
         this.pixels = preparePixels();
     }
 
+    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Color color, int fps, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
+        super(position, displayDuration, delay, fps, size, considerMargins, true, effects);
+        this.text = text;
+        this.fontSize = fontSize;
+        this.color = color;
+        this.pixels = preparePixels();
+    }
+
     @Override
-    public void render(SceneMargin margin, Mat frame, int currentFrame) {
+    public void render(SceneConfig config, Mat frame, int currentFrame) {
         if (currentFrame < frameStart || currentFrame > frameEnd) {
             return;
         }
         Mat image = new Mat(size.getMaxHeight(), size.getMaxWidth(), CvType.CV_8UC4);
         image.data().put(pixels);
 
-        addToVideoFrame(margin, frame, image);
+        addToVideoFrame(config, frame, image, currentFrame);
     }
 
     private byte[] preparePixels() {

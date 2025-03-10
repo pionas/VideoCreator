@@ -52,7 +52,7 @@ public class SceneRenderer {
                         );
 
                         for (SceneElement element : elements) {
-                            element.render(scene.getMargin(), frame, frameNumber);
+                            element.render(scene, frame, frameNumber);
                         }
                         Frame convertedFrame = converter.convert(frame);
                         recorder.record(convertedFrame);

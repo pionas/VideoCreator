@@ -3,9 +3,11 @@ package pl.excellentapp.ekonkursy.scene.elements;
 import lombok.Getter;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
-import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
+import pl.excellentapp.ekonkursy.scene.SceneConfig;
+import pl.excellentapp.ekonkursy.scene.effects.SceneEffect;
 
 import java.nio.file.Path;
+import java.util.List;
 
 @Getter
 public class ImageElement extends SceneElement {
@@ -19,9 +21,15 @@ public class ImageElement extends SceneElement {
         this.keepAfterEnd = keepAfterEnd;
     }
 
+    public ImageElement(Path filePath, ElementPosition position, int displayDuration, int delay, int fps, boolean keepAfterEnd, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
+        super(position, displayDuration, delay, fps, size, considerMargins, effects);
+        this.filePath = filePath;
+        this.keepAfterEnd = keepAfterEnd;
+    }
+
 
     @Override
-    public void render(SceneMargin margin, Mat frame, int currentFrame) {
+    public void render(SceneConfig config, Mat frame, int currentFrame) {
         if (currentFrame < frameStart || (currentFrame > frameEnd && !keepAfterEnd)) {
             return;
         }
@@ -30,6 +38,6 @@ public class ImageElement extends SceneElement {
             System.err.println("Nie udało się wczytać obrazu: " + filePath);
             return;
         }
-        addToVideoFrame(margin, frame, image);
+        addToVideoFrame(config, frame, image, currentFrame);
     }
 }

@@ -5,7 +5,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
-import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
+import pl.excellentapp.ekonkursy.scene.SceneConfig;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class VideoElement extends SceneElement {
     }
 
     @Override
-    public void render(SceneMargin margin, Mat frame, int currentFrame) {
+    public void render(SceneConfig config, Mat frame, int currentFrame) {
         if (!initialized || currentFrame < frameStart) {
             return;
         }
@@ -53,7 +53,7 @@ public class VideoElement extends SceneElement {
             if (videoFrame != null) {
                 try (OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
                     Mat image = converter.convert(videoFrame);
-                    addToVideoFrame(margin, frame, image);
+                    addToVideoFrame(config, frame, image, currentFrame);
                 }
             }
         } catch (Exception e) {

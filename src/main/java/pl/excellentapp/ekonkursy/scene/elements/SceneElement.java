@@ -5,7 +5,12 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Size;
-import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
+import pl.excellentapp.ekonkursy.scene.SceneConfig;
+import pl.excellentapp.ekonkursy.scene.effects.ResizeEffect;
+import pl.excellentapp.ekonkursy.scene.effects.SceneEffect;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.bytedeco.opencv.global.opencv_core.add;
 import static org.bytedeco.opencv.global.opencv_core.bitwise_and;
@@ -23,6 +28,7 @@ public abstract class SceneElement {
     protected final int frameStart;
     protected final int frameEnd;
     protected final ElementSize size;
+    protected final List<SceneEffect> effects = new ArrayList<>();
     protected final boolean considerMargins;
     protected final boolean applyAlphaBlending;
 
@@ -33,6 +39,7 @@ public abstract class SceneElement {
         this.size = size;
         this.considerMargins = considerMargins;
         this.applyAlphaBlending = false;
+        this.effects.add(new ResizeEffect());
     }
 
     public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins, boolean applyAlphaBlending) {
@@ -42,12 +49,38 @@ public abstract class SceneElement {
         this.size = size;
         this.considerMargins = considerMargins;
         this.applyAlphaBlending = applyAlphaBlending;
+        this.effects.add(new ResizeEffect());
     }
 
-    public abstract void render(SceneMargin margin, Mat frame, int currentFrame);
+    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
+        this.position = position;
+        this.frameStart = delay * fps;
+        this.frameEnd = this.frameStart + (displayDuration * fps);
+        this.size = size;
+        this.considerMargins = considerMargins;
+        this.applyAlphaBlending = false;
+        this.effects.addAll(effects);
+    }
 
-    protected void addToVideoFrame(SceneMargin margin, Mat frame, Mat image) {
-        Mat resizedImage = getResizedImage(margin, image, frame);
+    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins, boolean applyAlphaBlending, List<SceneEffect> effects) {
+        this.position = position;
+        this.frameStart = delay * fps;
+        this.frameEnd = this.frameStart + (displayDuration * fps);
+        this.size = size;
+        this.considerMargins = considerMargins;
+        this.applyAlphaBlending = applyAlphaBlending;
+        this.effects.addAll(effects);
+    }
+
+    public abstract void render(SceneConfig sceneConfig, Mat frame, int currentFrame);
+
+    protected void addToVideoFrame(SceneConfig sceneConfig, Mat frame, Mat image, int currentFrame) {
+        Mat resizedImage = image.clone();
+        for (SceneEffect effect : effects) {
+            Mat newImage = effect.applyEffect(sceneConfig, this, frame, resizedImage, currentFrame);
+            resizedImage.release();
+            resizedImage = newImage;
+        }
         try {
             int left = position.getLeft() - (resizedImage.cols() / 2);
             int top = position.getTop() - (resizedImage.rows() / 2);
@@ -66,40 +99,6 @@ public abstract class SceneElement {
                 resizedImage.release();
             }
         }
-    }
-
-    private Mat getResizedImage(SceneMargin margin, Mat image, Mat frame) {
-        int frameWidth = frame.cols();
-        int frameHeight = frame.rows();
-
-        int imgWidth = image.cols();
-        int imgHeight = image.rows();
-
-        int availableLeft = position.getLeft();
-        int availableRight = frameWidth - position.getLeft();
-        int availableTop = position.getTop();
-        int availableBottom = frameHeight - position.getTop();
-
-        int maxWidth = Math.min(availableLeft, availableRight) * 2;
-        int maxHeight = Math.min(availableTop, availableBottom) * 2;
-        if (considerMargins) {
-            maxWidth = Math.min(availableLeft - margin.getLeft(), availableRight - margin.getRight()) * 2;
-            maxHeight = Math.min(availableTop - margin.getTop(), availableBottom - margin.getBottom()) * 2;
-        }
-        maxWidth = Math.min(maxWidth, size.getMaxWidth());
-        maxHeight = Math.min(maxHeight, size.getMaxHeight());
-
-        double scaleX = (double) maxWidth / imgWidth;
-        double scaleY = (double) maxHeight / imgHeight;
-        double scale = Math.min(scaleX, scaleY);
-
-        int newWidth = (int) (imgWidth * scale);
-        int newHeight = (int) (imgHeight * scale);
-
-        Mat resizedImage = new Mat();
-        resize(image, resizedImage, new Size(newWidth, newHeight));
-
-        return resizedImage;
     }
 
     private void applyAlphaBlending(Mat resizedImage, Mat submat) {
