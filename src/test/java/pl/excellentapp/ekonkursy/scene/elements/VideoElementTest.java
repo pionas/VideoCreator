@@ -3,15 +3,17 @@ package pl.excellentapp.ekonkursy.scene.elements;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import pl.excellentapp.ekonkursy.scene.SceneConfig;
 import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
 
+import java.awt.Color;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -39,15 +41,15 @@ class VideoElementTest {
     @MethodSource("provideVideoElement")
     void testRenderWithinTimeFrame(int currentFrame, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, int fetchTimes) {
         // given
-        VideoElement videoElement = spy(new VideoElement(file, mockPosition, displayDuration, delay, fps, loop, keepLastFrame, new Size(100, 100), false));
-        SceneMargin sceneMargin = SceneMargin.builder().build();
+        VideoElement videoElement = spy(new VideoElement(file, mockPosition, displayDuration, delay, fps, loop, keepLastFrame, new ElementSize(100, 100), false));
+        SceneConfig sceneConfig = new SceneConfig(100, 100, Color.WHITE, Color.BLACK, 1, SceneMargin.builder().top(0).right(0).bottom(0).left(0).build(), List.of());
         Mat mockFrame = new Mat(100, 100, 16);
 
         // when
-        videoElement.render(sceneMargin, mockFrame, currentFrame);
+        videoElement.render(sceneConfig, mockFrame, currentFrame);
 
         // then
-        verify(videoElement, times(fetchTimes)).addToVideoFrame(any(), any(), any());
+        verify(videoElement, times(fetchTimes)).addToVideoFrame(any(), any(), any(), any());
     }
 
     private static Stream<Arguments> provideVideoElement() {
