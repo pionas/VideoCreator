@@ -1,0 +1,77 @@
+name: Generate Video and Commit
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_type:
+        description: 'Video type (lastAdded, topWeek, topMonth, todayFinish)'
+        required: true
+        default: 'lastAdded'
+
+  schedule:
+    - cron: '0 6 * * *'  # Codziennie o 7:00 CET (6:00 UTC) - todayFinish
+    - cron: '0 16 * * 5' # W każdy piątek o 17:00 CET (16:00 UTC) - topWeek
+    - cron: '0 19 * * *' # Codziennie o 20:00 CET (19:00 UTC) - lastAdded
+    - cron: '0 23 L * *' # Ostatni dzień miesiąca o 00:00 CET (23:00 UTC) - topMonth
+
+jobs:
+  generate_video:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build project with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Determine Video Type
+        id: video_type
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VIDEO_TYPE=${{ github.event.inputs.video_type }}" >> $GITHUB_ENV
+          else
+            CURRENT_HOUR=$(date +'%H')
+            CURRENT_DAY=$(date +'%u')
+            CURRENT_DATE=$(date +'%d')
+
+            if [ "$CURRENT_HOUR" = "07" ]; then
+              VIDEO_TYPE="todayFinish"
+            elif [ "$CURRENT_HOUR" = "17" ] && [ "$CURRENT_DAY" = "5" ]; then
+              VIDEO_TYPE="topWeek"
+            elif [ "$CURRENT_HOUR" = "20" ]; then
+              VIDEO_TYPE="lastAdded"
+            elif [ "$CURRENT_DATE" = "$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)" ]; then
+              VIDEO_TYPE="topMonth"
+            else
+              echo "No matching schedule, exiting."
+              exit 1
+            fi
+
+            echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
+          fi
+          echo "Selected video type: $VIDEO_TYPE"
+
+      - name: Run VideoCreator
+        run: |
+          mkdir -p output
+          java -jar target/*.jar $VIDEO_TYPE
+
+      - name: Rename and Move Video
+        run: |
+          mv ./movie.mp4 ./output/${VIDEO_TYPE}.mp4
+
+      - name: Commit and Push Video
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add ./output/${VIDEO_TYPE}.mp4
+          git commit -m "Add video: ${VIDEO_TYPE}"
+          git push
