@@ -73,4 +73,18 @@ public class ElementProvider {
                 false
         );
     }
+
+    public static SceneElement createLasChanceElement(int width, int height, int frameRate, int displayDuration) {
+        return new VideoElement(
+                ProjectProperties.Videos.LAST_CHANCE,
+                new ElementPosition(height / 2, width / 2),
+                displayDuration,
+                0,
+                frameRate,
+                false,
+                true,
+                new ElementSize(width, height),
+                false
+        );
+    }
 }

@@ -19,6 +19,7 @@ public final class ProjectProperties {
         public static final Path CONFETTI = Path.of("./movies/confetti.mp4");
         public static final Path WOMENS_DAY = Path.of("./movies/womens-day.mp4");
         public static final Path FLUID_GRADIENT = Path.of("./movies/fluid-gradient.mp4");
+        public static final Path LAST_CHANCE = Path.of("./movies/last-chance.mp4");
         public static final Path EFFECT = Path.of("./movies/effect.mp4");
     }
 

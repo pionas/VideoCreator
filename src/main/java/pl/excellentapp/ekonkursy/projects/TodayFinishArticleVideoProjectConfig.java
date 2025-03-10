@@ -15,7 +15,6 @@ import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
 import pl.excellentapp.ekonkursy.scene.elements.ElementProvider;
 import pl.excellentapp.ekonkursy.scene.elements.ElementSize;
 import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
-import pl.excellentapp.ekonkursy.scene.elements.TextElement;
 
 import java.awt.Color;
 import java.nio.file.Path;
@@ -64,18 +63,7 @@ public class TodayFinishArticleVideoProjectConfig implements IVideoProjectConfig
                 .setWidth(width)
                 .setHeight(height)
                 .setDuration(durationInSeconds)
-                .addElement(getImageElement(ProjectProperties.Images.WELCOME, durationInSeconds, 0, frameRate, true))
-                .addElement(new TextElement(
-                        "Ostatnia szansa",
-                        new ElementPosition(height - 500, width / 2),
-                        durationInSeconds,
-                        0,
-                        20,
-                        new Color(0xB60C20),
-                        frameRate,
-                        new ElementSize(width, 100),
-                        false
-                ))
+                .addElement(ElementProvider.createLasChanceElement(width, height, frameRate, durationInSeconds))
                 .build();
     }
 
