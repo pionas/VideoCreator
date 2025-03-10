@@ -16,6 +16,7 @@ import pl.excellentapp.ekonkursy.utills.VideoProjectLoader;
 public class VideoCreator {
 
     public static void main(String[] args) {
+        String videoType = (args.length > 1) ? args[1] : args[0];
         VideoProjectLoader videoProjectLoader = new VideoProjectLoader(
                 getArticleImageDownloader(),
                 getImageProcessor(),
@@ -23,7 +24,7 @@ public class VideoCreator {
                 new ImageStripGenerator()
         );
 
-        VideoProjectConfig videoProjectConfig = videoProjectLoader.loadProject(args).toVideoProjectConfig();
+        VideoProjectConfig videoProjectConfig = videoProjectLoader.loadProject(videoType).toVideoProjectConfig();
         SceneRenderer sceneRenderer = new SceneRenderer(videoProjectConfig.getFrameRate(), videoProjectConfig.getWidth(), videoProjectConfig.getHeight());
         sceneRenderer.renderScenes(videoProjectConfig.getSceneConfigs(), "./movie.mp4");
         new DirectoryCleaner().clean();

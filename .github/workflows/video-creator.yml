@@ -71,7 +71,7 @@ jobs:
         run: |
           mkdir -p output
           echo "Running VideoCreator with VIDEO_TYPE=${{ env.VIDEO_TYPE }}"
-          java -jar target/*.jar -- ${{ env.VIDEO_TYPE }}
+          java -jar target/*.jar ${{ env.VIDEO_TYPE }}
 
       - name: Rename and Move Video
         run: |

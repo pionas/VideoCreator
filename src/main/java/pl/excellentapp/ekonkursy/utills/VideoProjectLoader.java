@@ -20,17 +20,16 @@ public class VideoProjectLoader {
     private final ArticleFetcher articleFetcher;
     private final ImageStripGenerator imageStripGenerator;
 
-    public IVideoProjectConfig loadProject(String[] args) {
-        if (args.length == 0) {
-            throw new IllegalArgumentException("No project type provided.");
-        }
-        return switch (args[0]) {
+    public IVideoProjectConfig loadProject(String videoType) {
+        return switch (videoType) {
             case "lastAdded" -> new LastAddedArticleVideoProjectConfig(imageDownloader, imageProcessor, articleFetcher);
-            case "topWeek" -> new TopOfWeekArticleVideoProjectConfig(imageDownloader,imageProcessor,  articleFetcher);
+            case "topWeek" -> new TopOfWeekArticleVideoProjectConfig(imageDownloader, imageProcessor, articleFetcher);
             case "womens" -> new WomensDayArticleVideoProjectConfig(imageDownloader, imageProcessor, articleFetcher);
-            case "topMonth" -> new TopOfMonthArticleVideoProjectConfig(imageDownloader,imageProcessor,  articleFetcher, imageStripGenerator);
-            case "todayFinish" -> new TodayFinishArticleVideoProjectConfig(imageDownloader, imageProcessor, articleFetcher);
-            default -> throw new IllegalArgumentException("Unknown project type: " + args[0]);
+            case "topMonth" ->
+                    new TopOfMonthArticleVideoProjectConfig(imageDownloader, imageProcessor, articleFetcher, imageStripGenerator);
+            case "todayFinish" ->
+                    new TodayFinishArticleVideoProjectConfig(imageDownloader, imageProcessor, articleFetcher);
+            default -> throw new IllegalArgumentException("Unknown project type: " + videoType);
         };
     }
 }
