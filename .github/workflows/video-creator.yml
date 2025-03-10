@@ -9,10 +9,10 @@ on:
         default: 'lastAdded'
 
   schedule:
-    - cron: '0 6 * * *'  # Codziennie o 7:00 CET (6:00 UTC) - todayFinish
-    - cron: '0 16 * * 5' # W każdy piątek o 17:00 CET (16:00 UTC) - topWeek
-    - cron: '0 19 * * *' # Codziennie o 20:00 CET (19:00 UTC) - lastAdded
-    - cron: '0 23 L * *' # Ostatni dzień miesiąca o 00:00 CET (23:00 UTC) - topMonth
+    - cron: '0 6 * * *'
+    - cron: '0 16 * * 5'
+    - cron: '0 19 * * *'
+    - cron: '0 23 28-31 * *'
 
 jobs:
   generate_video:
@@ -41,6 +41,7 @@ jobs:
             CURRENT_HOUR=$(date +'%H')
             CURRENT_DAY=$(date +'%u')
             CURRENT_DATE=$(date +'%d')
+            LAST_DAY_OF_MONTH=$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)
 
             if [ "$CURRENT_HOUR" = "07" ]; then
               VIDEO_TYPE="todayFinish"
@@ -48,7 +49,7 @@ jobs:
               VIDEO_TYPE="topWeek"
             elif [ "$CURRENT_HOUR" = "20" ]; then
               VIDEO_TYPE="lastAdded"
-            elif [ "$CURRENT_DATE" = "$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)" ]; then
+            elif [ "$CURRENT_DATE" = "$LAST_DAY_OF_MONTH" ]; then
               VIDEO_TYPE="topMonth"
             else
               echo "No matching schedule, exiting."
