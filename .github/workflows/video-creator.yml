@@ -66,12 +66,13 @@ jobs:
 
             echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
           fi
-          echo "Selected video type:$VIDEO_TYPE"
+          echo "Selected video type: $VIDEO_TYPE"
 
       - name: Run VideoCreator
         run: |
           mkdir -p output
-          java -jar target/*.jar "$VIDEO_TYPE"
+          echo "Running VideoCreator with VIDEO_TYPE=${{ env.VIDEO_TYPE }}"
+          java -jar target/*.jar ${{ env.VIDEO_TYPE }}
 
       - name: Rename and Move Video
         run: |
