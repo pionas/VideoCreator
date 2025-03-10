@@ -76,10 +76,11 @@ jobs:
       - name: Rename and Move Video
         run: |
           TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
-          FILENAME="$VIDEO_TYPE_${TIMESTAMP}.mp4"
+          FILENAME="${VIDEO_TYPE}_${TIMESTAMP}.mp4"
           mv ./movie.mp4 ./output/$FILENAME
+          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
       - uses: EndBug/add-and-commit@v9
         with:
-          add: './output/$FILENAME'
-          message: 'Add video: $FILENAME'
+          add: ./output/${{ env.FILENAME }}
+          message: 'Add video: ${{ env.FILENAME }}'
