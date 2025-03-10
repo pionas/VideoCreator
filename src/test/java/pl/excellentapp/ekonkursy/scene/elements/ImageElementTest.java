@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -44,7 +45,7 @@ class ImageElementTest {
         imageElement.render(sceneConfig, mockFrame, currentFrame);
 
         // then
-        verify(imageElement, times(fetchTimes)).addToVideoFrame(any(), any(), any(), any());
+        verify(imageElement, times(fetchTimes)).addToVideoFrame(any(SceneConfig.class), any(Mat.class), any(Mat.class), anyInt());
     }
 
     private static Stream<Arguments> provideImageElement() {
