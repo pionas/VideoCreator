@@ -65,7 +65,7 @@ public class TopOfMonthArticleVideoProjectConfig implements IVideoProjectConfig 
     }
 
     private SceneConfig createWelcomeScreen() {
-        int durationInSeconds = 2;
+        double durationInSeconds = 2.0;
         return new SceneBuilder()
                 .setBackgroundColor(Color.WHITE)
                 .setTextColor(Color.BLACK)
@@ -156,7 +156,7 @@ public class TopOfMonthArticleVideoProjectConfig implements IVideoProjectConfig 
                 .build();
     }
 
-    private ImageElement getImageElement(Path filePath, int durationInSeconds, int delay, int fps, boolean keepAfterEnd) {
+    private ImageElement getImageElement(Path filePath, double durationInSeconds, double delay, int fps, boolean keepAfterEnd) {
         return new ImageElement(
                 filePath,
                 new ElementPosition(height / 2, width / 2),

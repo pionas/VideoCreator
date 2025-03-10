@@ -23,7 +23,7 @@ public class TextElement extends SceneElement {
     private final Color color;
     private final byte[] pixels;
 
-    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Color color, int fps, ElementSize size, boolean considerMargins) {
+    public TextElement(String text, ElementPosition position, double displayDuration, double delay, int fontSize, Color color, int fps, ElementSize size, boolean considerMargins) {
         super(position, displayDuration, delay, fps, size, considerMargins, true);
         this.text = text;
         this.fontSize = fontSize;
@@ -31,7 +31,7 @@ public class TextElement extends SceneElement {
         this.pixels = preparePixels();
     }
 
-    public TextElement(String text, ElementPosition position, int displayDuration, int delay, int fontSize, Color color, int fps, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
+    public TextElement(String text, ElementPosition position, double displayDuration, double delay, int fontSize, Color color, int fps, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
         super(position, displayDuration, delay, fps, size, considerMargins, true, effects);
         this.text = text;
         this.fontSize = fontSize;

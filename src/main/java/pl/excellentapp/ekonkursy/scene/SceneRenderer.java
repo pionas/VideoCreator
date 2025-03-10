@@ -30,7 +30,7 @@ public class SceneRenderer {
             setupRecorder(recorder, fps);
             try (OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
                 for (SceneConfig scene : scenes) {
-                    int totalFrames = scene.getDurationInSeconds() * fps;
+                    int totalFrames = (int) (scene.getDurationInSeconds() * fps);
                     List<SceneElement> elements = scene.getElements();
 
                     for (int frameNumber = 0; frameNumber < totalFrames; frameNumber++) {

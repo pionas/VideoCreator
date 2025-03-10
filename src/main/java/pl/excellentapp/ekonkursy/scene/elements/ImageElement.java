@@ -15,13 +15,13 @@ public class ImageElement extends SceneElement {
     private final Path filePath;
     private final boolean keepAfterEnd;
 
-    public ImageElement(Path filePath, ElementPosition position, int displayDuration, int delay, int fps, boolean keepAfterEnd, ElementSize size, boolean considerMargins) {
+    public ImageElement(Path filePath, ElementPosition position, double displayDuration, double delay, int fps, boolean keepAfterEnd, ElementSize size, boolean considerMargins) {
         super(position, displayDuration, delay, fps, size, considerMargins);
         this.filePath = filePath;
         this.keepAfterEnd = keepAfterEnd;
     }
 
-    public ImageElement(Path filePath, ElementPosition position, int displayDuration, int delay, int fps, boolean keepAfterEnd, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
+    public ImageElement(Path filePath, ElementPosition position, double displayDuration, double delay, int fps, boolean keepAfterEnd, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
         super(position, displayDuration, delay, fps, size, considerMargins, effects);
         this.filePath = filePath;
         this.keepAfterEnd = keepAfterEnd;

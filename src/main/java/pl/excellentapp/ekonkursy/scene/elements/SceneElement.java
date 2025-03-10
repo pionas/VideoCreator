@@ -32,40 +32,40 @@ public abstract class SceneElement {
     protected final boolean considerMargins;
     protected final boolean applyAlphaBlending;
 
-    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins) {
+    public SceneElement(ElementPosition position, double displayDuration, double delay, int fps, ElementSize size, boolean considerMargins) {
         this.position = position;
-        this.frameStart = delay * fps;
-        this.frameEnd = this.frameStart + (displayDuration * fps);
+        this.frameStart = (int) (delay * fps);
+        this.frameEnd = (int) (this.frameStart + (displayDuration * fps));
         this.size = size;
         this.considerMargins = considerMargins;
         this.applyAlphaBlending = false;
         this.effects.add(new ResizeEffect());
     }
 
-    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins, boolean applyAlphaBlending) {
+    public SceneElement(ElementPosition position, double displayDuration, double delay, int fps, ElementSize size, boolean considerMargins, boolean applyAlphaBlending) {
         this.position = position;
-        this.frameStart = delay * fps;
-        this.frameEnd = this.frameStart + (displayDuration * fps);
+        this.frameStart = (int) (delay * fps);
+        this.frameEnd = (int) (this.frameStart + (displayDuration * fps));
         this.size = size;
         this.considerMargins = considerMargins;
         this.applyAlphaBlending = applyAlphaBlending;
         this.effects.add(new ResizeEffect());
     }
 
-    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
+    public SceneElement(ElementPosition position, double displayDuration, double delay, int fps, ElementSize size, boolean considerMargins, List<SceneEffect> effects) {
         this.position = position;
-        this.frameStart = delay * fps;
-        this.frameEnd = this.frameStart + (displayDuration * fps);
+        this.frameStart = (int) (delay * fps);
+        this.frameEnd = (int) (this.frameStart + (displayDuration * fps));
         this.size = size;
         this.considerMargins = considerMargins;
         this.applyAlphaBlending = false;
         this.effects.addAll(effects);
     }
 
-    public SceneElement(ElementPosition position, int displayDuration, int delay, int fps, ElementSize size, boolean considerMargins, boolean applyAlphaBlending, List<SceneEffect> effects) {
+    public SceneElement(ElementPosition position, double displayDuration, double delay, int fps, ElementSize size, boolean considerMargins, boolean applyAlphaBlending, List<SceneEffect> effects) {
         this.position = position;
-        this.frameStart = delay * fps;
-        this.frameEnd = this.frameStart + (displayDuration * fps);
+        this.frameStart = (int) (delay * fps);
+        this.frameEnd = (int) (this.frameStart + (displayDuration * fps));
         this.size = size;
         this.considerMargins = considerMargins;
         this.applyAlphaBlending = applyAlphaBlending;

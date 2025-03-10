@@ -13,7 +13,7 @@ public class SceneBuilder {
     private int height = 1080;
     private Color backgroundColor = Color.WHITE;
     private Color textColor = Color.BLACK;
-    private int durationInSeconds = 5;
+    private double durationInSeconds = 5;
     private SceneMargin margin = SceneMargin.builder().build();
     private final List<SceneElement> elements = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class SceneBuilder {
         return this;
     }
 
-    public SceneBuilder setDuration(int durationInSeconds) {
+    public SceneBuilder setDuration(double durationInSeconds) {
         this.durationInSeconds = durationInSeconds;
         return this;
     }

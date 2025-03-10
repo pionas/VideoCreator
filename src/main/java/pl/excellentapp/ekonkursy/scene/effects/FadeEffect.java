@@ -9,9 +9,9 @@ public class FadeEffect implements SceneEffect {
     private final int fadeInDuration;
     private final int fadeOutDuration;
 
-    public FadeEffect(int fadeInDuration, int fadeOutDuration, int fps) {
-        this.fadeInDuration = fadeInDuration * fps;
-        this.fadeOutDuration = fadeOutDuration * fps;
+    public FadeEffect(double fadeInDuration, double fadeOutDuration, int fps) {
+        this.fadeInDuration = (int) (fadeInDuration * fps);
+        this.fadeOutDuration = (int) (fadeOutDuration * fps);
     }
 
     @Override
