@@ -8,8 +8,6 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class VideoElement extends SceneElement {
@@ -19,7 +17,7 @@ public class VideoElement extends SceneElement {
     private final boolean keepLastFrame;
     private int totalFrames;
     private boolean initialized = false;
-    private final List<Frame> videoFrames = new ArrayList<>();
+    private FFmpegFrameGrabber grabber;
 
     public VideoElement(Path videoFilePath, ElementPosition position, int displayDuration, int delay, int fps, boolean loop, boolean keepLastFrame, ElementSize size, boolean considerMargins) {
         super(position, displayDuration, delay, fps, size, considerMargins);
@@ -38,18 +36,19 @@ public class VideoElement extends SceneElement {
             return;
         }
         int frameIndex = currentFrame - frameStart;
-        if (frameIndex >= videoFrames.size()) {
+        if (frameIndex >= totalFrames) {
             if (loop) {
-                frameIndex %= videoFrames.size();
+                frameIndex %= totalFrames;
             } else if (!keepLastFrame) {
                 return;
             } else {
-                frameIndex = videoFrames.size() - 1;
+                frameIndex = totalFrames - 1;
             }
         }
 
         try {
-            Frame videoFrame = videoFrames.get(frameIndex);
+            grabber.setTimestamp((long) (frameIndex * (1000000 / grabber.getFrameRate())));
+            Frame videoFrame = grabber.grabImage();
             if (videoFrame != null) {
                 try (OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat()) {
                     Mat image = converter.convert(videoFrame);
@@ -63,16 +62,11 @@ public class VideoElement extends SceneElement {
     }
 
     private void loadFrames() {
-        try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath.toString())) {
+        try {
+            grabber = new FFmpegFrameGrabber(videoFilePath.toString());
             grabber.setFormat("mp4");
             grabber.start();
-            Frame frame;
-            while ((frame = grabber.grabImage()) != null) {
-                videoFrames.add(frame.clone());
-            }
-            totalFrames = videoFrames.size();
-            grabber.stop();
-            grabber.release();
+            totalFrames = grabber.getLengthInFrames();
             initialized = true;
         } catch (Exception e) {
             System.err.println("Błąd podczas wczytywania klatek: " + e.getMessage());
