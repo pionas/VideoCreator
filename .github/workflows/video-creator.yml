@@ -86,3 +86,19 @@ jobs:
         with:
           add: ./output/${{ env.FILENAME }}
           message: 'Add video: ${{ env.FILENAME }}'
+
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v4
+        with:
+          server_address: ${{secrets.MAIL_HOST}}
+          server_port: ${{secrets.MAIL_PORT}}
+          secure: ${{secrets.MAIL_SECURE}}
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Create new video
+          to: ${{secrets.MAIL_RECIPIENTS}}
+          body: https://github.com/pionas/VideoCreator/raw/refs/heads/main/output/${{ env.FILENAME }}
+          cc: ${{secrets.MAIL_COPY_RECIPIENTS}}
+          ignore_cert: true
+          convert_markdown: true
+          priority: low
