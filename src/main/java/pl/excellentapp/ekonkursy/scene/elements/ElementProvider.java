@@ -87,4 +87,32 @@ public class ElementProvider {
                 false
         );
     }
+
+    public static SceneElement createIntroLastAddedElement(int width, int height, int frameRate) {
+        return new VideoElement(
+                ProjectProperties.Videos.INTRO_NOW_OPEN,
+                new ElementPosition(height / 2, width / 2),
+                8,
+                0,
+                frameRate,
+                false,
+                true,
+                new ElementSize(width, height),
+                false
+        );
+    }
+
+    public static SceneElement createBackgroundStarsElement(int width, int height, int frameRate) {
+        return new VideoElement(
+                ProjectProperties.Videos.BACKGROUND_STARS,
+                new ElementPosition(height / 2, width / 2),
+                35,
+                0,
+                frameRate,
+                true,
+                false,
+                new ElementSize(width, height),
+                false
+        );
+    }
 }

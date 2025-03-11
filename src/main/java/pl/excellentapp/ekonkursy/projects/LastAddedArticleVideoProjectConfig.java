@@ -1,11 +1,11 @@
 package pl.excellentapp.ekonkursy.projects;
 
-import pl.excellentapp.ekonkursy.config.IVideoProjectConfig;
-import pl.excellentapp.ekonkursy.config.VideoProjectConfig;
 import pl.excellentapp.ekonkursy.article.api.ArticleFetcher;
-import pl.excellentapp.ekonkursy.article.service.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.article.models.Article;
+import pl.excellentapp.ekonkursy.article.service.ArticleImageDownloader;
+import pl.excellentapp.ekonkursy.config.IVideoProjectConfig;
 import pl.excellentapp.ekonkursy.config.ProjectProperties;
+import pl.excellentapp.ekonkursy.config.VideoProjectConfig;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
@@ -15,15 +15,19 @@ import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
 import pl.excellentapp.ekonkursy.scene.elements.ElementProvider;
 import pl.excellentapp.ekonkursy.scene.elements.ElementSize;
 import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
+import pl.excellentapp.ekonkursy.scene.elements.SceneElement;
 
 import java.awt.Color;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class LastAddedArticleVideoProjectConfig implements IVideoProjectConfig {
+
+    private static final Random RANDOM = new Random();
 
     private final ArticleImageDownloader imageDownloader;
     private final ImageProcessor imageProcessor;
@@ -56,15 +60,13 @@ public class LastAddedArticleVideoProjectConfig implements IVideoProjectConfig {
     }
 
     private SceneConfig createWelcomeScreen() {
-        int durationInSeconds = 2;
         return new SceneBuilder()
                 .setBackgroundColor(Color.WHITE)
                 .setTextColor(Color.BLACK)
                 .setWidth(width)
                 .setHeight(height)
-                .setDuration(durationInSeconds)
-                .addElement(getImageElement(ProjectProperties.Images.WELCOME, durationInSeconds, 0, frameRate, true))
-//                .addElement(new TextElement("Ostatnio dodane", new ElementPosition(height - 300, width / 2), durationInSeconds, 0, 20, new Scalar(128, 128, 128, 128), frameRate, new Size(100, 100)))
+                .setDuration(8)
+                .addElement(ElementProvider.createIntroLastAddedElement(width, height, frameRate))
                 .build();
     }
 
@@ -73,13 +75,14 @@ public class LastAddedArticleVideoProjectConfig implements IVideoProjectConfig {
         int displayDuration = articles.size();
         Color backgroundColor = Color.WHITE;
         Color textColor = Color.BLACK;
+        SceneElement sceneElement = RANDOM.nextBoolean() ? ElementProvider.createEffectElement(width, height, frameRate, displayDuration) : ElementProvider.createBackgroundStarsElement(width, height, frameRate);
         SceneBuilder sceneBuilder = new SceneBuilder()
                 .setWidth(width)
                 .setHeight(height)
                 .setBackgroundColor(backgroundColor)
                 .setTextColor(textColor)
                 .setSceneMargin(getSceneMargin())
-                .addElement(ElementProvider.createEffectElement(width, height, frameRate, displayDuration))
+                .addElement(sceneElement)
                 .setDuration(displayDuration);
         imageDownloader.downloadImages(articles);
         articles.forEach(article -> imageProcessor.applyBackground(article.getImageFile().toPath(), backgroundColor));

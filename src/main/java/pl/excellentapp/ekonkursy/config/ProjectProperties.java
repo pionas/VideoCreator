@@ -21,6 +21,8 @@ public final class ProjectProperties {
         public static final Path FLUID_GRADIENT = Path.of("./movies/fluid-gradient.mp4");
         public static final Path LAST_CHANCE = Path.of("./movies/last-chance.mp4");
         public static final Path EFFECT = Path.of("./movies/effect.mp4");
+        public static final Path INTRO_NOW_OPEN = Path.of("./movies/intro-now-open.mp4");
+        public static final Path BACKGROUND_STARS = Path.of("./movies/background-stars.mp4");
     }
 
     public static final class Images {
