@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy.core;
+package pl.excellentapp.ekonkursy.core.downloader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

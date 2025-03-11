@@ -3,8 +3,8 @@ package pl.excellentapp.ekonkursy.scene.elements;
 import lombok.Getter;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.opencv.core.CvType;
-import pl.excellentapp.ekonkursy.core.FontLoader;
-import pl.excellentapp.ekonkursy.core.TextRenderer;
+import pl.excellentapp.ekonkursy.core.utils.FontLoader;
+import pl.excellentapp.ekonkursy.core.utils.TextRenderer;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
 import pl.excellentapp.ekonkursy.scene.effects.SceneEffect;
 

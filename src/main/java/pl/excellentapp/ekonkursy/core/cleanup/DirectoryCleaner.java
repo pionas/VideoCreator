@@ -1,4 +1,6 @@
-package pl.excellentapp.ekonkursy.core;
+package pl.excellentapp.ekonkursy.core.cleanup;
+
+import pl.excellentapp.ekonkursy.config.ProjectProperties;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

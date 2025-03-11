@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
-package pl.excellentapp.ekonkursy.article;
+package pl.excellentapp.ekonkursy.article.api;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.ekonkursy.core.ProjectProperties;
+import pl.excellentapp.ekonkursy.config.ProjectProperties;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

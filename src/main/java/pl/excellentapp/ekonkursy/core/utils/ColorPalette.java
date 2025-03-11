@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy.core;
+package pl.excellentapp.ekonkursy.core.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

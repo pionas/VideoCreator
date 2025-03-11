@@ -1,6 +1,6 @@
 package pl.excellentapp.ekonkursy.scene.elements;
 
-import pl.excellentapp.ekonkursy.core.ProjectProperties;
+import pl.excellentapp.ekonkursy.config.ProjectProperties;
 
 public class ElementProvider {
 

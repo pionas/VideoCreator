@@ -1,9 +1,9 @@
-package pl.excellentapp.ekonkursy.article;
+package pl.excellentapp.ekonkursy.article.api;
 
 import lombok.RequiredArgsConstructor;
 import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.article.models.ArticlePage;
-import pl.excellentapp.ekonkursy.core.JsonDownloader;
+import pl.excellentapp.ekonkursy.core.downloader.JsonDownloader;
 
 import java.util.List;
 

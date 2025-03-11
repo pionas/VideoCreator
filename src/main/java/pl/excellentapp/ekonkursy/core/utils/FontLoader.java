@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy.core;
+package pl.excellentapp.ekonkursy.core.utils;
 
 import java.awt.Font;
 import java.io.File;

@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy.core;
+package pl.excellentapp.ekonkursy.core.downloader;
 
 import java.io.File;
 import java.io.IOException;

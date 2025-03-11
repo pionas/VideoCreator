@@ -1,8 +1,8 @@
 package pl.excellentapp.ekonkursy.image;
 
-import pl.excellentapp.ekonkursy.core.ColorPalette;
-import pl.excellentapp.ekonkursy.core.FontLoader;
-import pl.excellentapp.ekonkursy.core.TextRenderer;
+import pl.excellentapp.ekonkursy.core.utils.ColorPalette;
+import pl.excellentapp.ekonkursy.core.utils.FontLoader;
+import pl.excellentapp.ekonkursy.core.utils.TextRenderer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

@@ -1,9 +1,9 @@
 package pl.excellentapp.ekonkursy.utills;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.ekonkursy.IVideoProjectConfig;
-import pl.excellentapp.ekonkursy.article.ArticleFetcher;
-import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
+import pl.excellentapp.ekonkursy.config.IVideoProjectConfig;
+import pl.excellentapp.ekonkursy.article.api.ArticleFetcher;
+import pl.excellentapp.ekonkursy.article.service.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.image.ImageStripGenerator;
 import pl.excellentapp.ekonkursy.projects.LastAddedArticleVideoProjectConfig;

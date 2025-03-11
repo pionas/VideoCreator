@@ -1,8 +1,8 @@
-package pl.excellentapp.ekonkursy.article;
+package pl.excellentapp.ekonkursy.article.service;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.ekonkursy.core.FileDownloader;
-import pl.excellentapp.ekonkursy.core.ProjectProperties;
+import pl.excellentapp.ekonkursy.core.downloader.FileDownloader;
+import pl.excellentapp.ekonkursy.config.ProjectProperties;
 import pl.excellentapp.ekonkursy.article.models.Article;
 
 import java.io.File;

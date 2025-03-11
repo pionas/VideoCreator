@@ -1,4 +1,4 @@
-package pl.excellentapp.ekonkursy;
+package pl.excellentapp.ekonkursy.config;
 
 public interface IVideoProjectConfig {
 

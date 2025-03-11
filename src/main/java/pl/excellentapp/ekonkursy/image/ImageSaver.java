@@ -1,6 +1,6 @@
 package pl.excellentapp.ekonkursy.image;
 
-import pl.excellentapp.ekonkursy.core.ProjectProperties;
+import pl.excellentapp.ekonkursy.config.ProjectProperties;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

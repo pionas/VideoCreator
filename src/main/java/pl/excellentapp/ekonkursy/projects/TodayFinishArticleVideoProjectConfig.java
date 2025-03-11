@@ -1,11 +1,11 @@
 package pl.excellentapp.ekonkursy.projects;
 
-import pl.excellentapp.ekonkursy.IVideoProjectConfig;
-import pl.excellentapp.ekonkursy.VideoProjectConfig;
-import pl.excellentapp.ekonkursy.article.ArticleFetcher;
-import pl.excellentapp.ekonkursy.article.ArticleImageDownloader;
+import pl.excellentapp.ekonkursy.config.IVideoProjectConfig;
+import pl.excellentapp.ekonkursy.config.VideoProjectConfig;
+import pl.excellentapp.ekonkursy.article.api.ArticleFetcher;
+import pl.excellentapp.ekonkursy.article.service.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.article.models.Article;
-import pl.excellentapp.ekonkursy.core.ProjectProperties;
+import pl.excellentapp.ekonkursy.config.ProjectProperties;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
