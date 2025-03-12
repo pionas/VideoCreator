@@ -52,6 +52,11 @@ public class SceneBuilder {
         return this;
     }
 
+    public SceneBuilder addElements(List<SceneElement> elements) {
+        this.elements.addAll(elements);
+        return this;
+    }
+
     public SceneConfig build() {
         return new SceneConfig(width, height, backgroundColor, textColor, durationInSeconds, margin, elements);
     }

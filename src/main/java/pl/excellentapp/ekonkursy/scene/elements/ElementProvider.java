@@ -8,7 +8,7 @@ public class ElementProvider {
         return new VideoElement(
                 ProjectProperties.Videos.SUBSCRIBE,
                 new ElementPosition(height - 200, width / 2),
-                1,
+                3,
                 1,
                 frameRate,
                 true,
@@ -74,7 +74,7 @@ public class ElementProvider {
         );
     }
 
-    public static SceneElement createLasChanceElement(int width, int height, int frameRate, int displayDuration) {
+    public static SceneElement createLastChanceElement(int width, int height, int frameRate, int displayDuration) {
         return new VideoElement(
                 ProjectProperties.Videos.LAST_CHANCE,
                 new ElementPosition(height / 2, width / 2),

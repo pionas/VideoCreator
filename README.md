@@ -12,10 +12,10 @@ Aplikacja generuje filmy prezentujące najnowsze konkursy, kończące się dzisi
 - Pobieranie obrazów związanych z konkursami
 - Generowanie filmów o różnych tematach, np.:
   - **lastAdded** – ostatnio dodane konkursy
-  - **topWeek** – najpopularniejsze konkursy tygodnia
-  - **topMonth** – najpopularniejsze konkursy miesiąca
-  - **todayFinish** – konkursy kończące się dzisiaj
-  - **womens** – konkursy związane z Dniem Kobiet
+  - **topWeekly** – najpopularniejsze konkursy tygodnia
+  - **topMonthly** – najpopularniejsze konkursy miesiąca
+  - **endingToday** – konkursy kończące się dzisiaj
+  - **womensDay** – konkursy związane z Dniem Kobiet
 - Tworzenie dynamicznych scen z efektami wizualnymi
 - Automatyczne czyszczenie plików tymczasowych po zakończeniu działania
 
@@ -50,7 +50,7 @@ java -jar target/eKonkursySocialMedia-1.0-SNAPSHOT-shaded.jar lastAdded
 lub dla innych typów filmów:
 
 ```sh
-java -jar target/eKonkursySocialMedia-1.0-SNAPSHOT-shaded.jar topMonth
+java -jar target/eKonkursySocialMedia-1.0-SNAPSHOT-shaded.jar topMonthly
 ```
 
 ## GitHub Actions Workflow
@@ -62,9 +62,9 @@ Projekt zawiera skonfigurowany workflow GitHub Actions, który pozwala na ręczn
 Można ręcznie wywołać workflow na GitHubie i określić typ filmu jako jeden z dostępnych:
 
 - **lastAdded**
-- **topWeek**
-- **topMonth**
-- **todayFinish**
+- **topWeekly**
+- **topMonthly**
+- **endingToday**
 
 ### Konfiguracja workflow
 
@@ -77,7 +77,7 @@ on:
   workflow_dispatch:
     inputs:
       video_type:
-        description: 'Video type (lastAdded, topWeek, topMonth, todayFinish)'
+        description: 'Video type (lastAdded, topWeekly, topMonthly, endingToday)'
         required: true
         default: 'lastAdded'
 ```

@@ -9,6 +9,7 @@ import java.nio.file.Path;
 public final class ProjectProperties {
 
     public static final String EKONKURSY_API_URL = "https://www.e-konkursy.info";
+    public static final String UPLOAD_VIDEO_API_URL = EKONKURSY_API_URL + "/api/upload";
 
     public static final Path TEMPORARY_DIRECTORY = Path.of("./temp");
     public static final Path OUTPUT_FILE = Path.of("output.mp4");

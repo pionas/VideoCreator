@@ -1,74 +1,64 @@
 package pl.excellentapp.ekonkursy.projects;
 
-import pl.excellentapp.ekonkursy.config.IVideoProjectConfig;
-import pl.excellentapp.ekonkursy.config.VideoProjectConfig;
 import pl.excellentapp.ekonkursy.article.api.ArticleFetcher;
 import pl.excellentapp.ekonkursy.article.service.ArticleImageDownloader;
-import pl.excellentapp.ekonkursy.article.models.Article;
 import pl.excellentapp.ekonkursy.config.ProjectProperties;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
-import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
 import pl.excellentapp.ekonkursy.scene.builder.SceneBuilder;
-import pl.excellentapp.ekonkursy.scene.builder.SceneMargin;
+import pl.excellentapp.ekonkursy.scene.effects.FadeEffect;
+import pl.excellentapp.ekonkursy.scene.effects.ResizeEffect;
 import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
 import pl.excellentapp.ekonkursy.scene.elements.ElementProvider;
 import pl.excellentapp.ekonkursy.scene.elements.ElementSize;
-import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
+import pl.excellentapp.ekonkursy.scene.elements.SceneElement;
+import pl.excellentapp.ekonkursy.scene.elements.TextElement;
 
 import java.awt.Color;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-public class TopWeeklyArticleVideoProjectConfig implements IVideoProjectConfig {
+public class TopWeeklyArticleVideoProjectConfig extends AbstractArticleVideoProjectConfig {
 
-    private final ArticleImageDownloader imageDownloader;
-    private final ImageProcessor imageProcessor;
-    private final List<Article> articles;
-    private final int width;
-    private final int height;
-    private final int frameRate;
+    private final double durationInSeconds = 2.0;
 
     public TopWeeklyArticleVideoProjectConfig(ArticleImageDownloader imageDownloader, ImageProcessor imageProcessor, ArticleFetcher articleFetcher) {
-        this.imageDownloader = imageDownloader;
-        this.imageProcessor = imageProcessor;
-        this.articles = articleFetcher.top("week");
-        this.width = ProjectProperties.VideoSettings.WIDTH;
-        this.height = ProjectProperties.VideoSettings.HEIGHT;
-        this.frameRate = ProjectProperties.VideoSettings.FRAME_RATE;
+        super(
+                imageDownloader,
+                imageProcessor,
+                articleFetcher.top("week"),
+                ProjectProperties.VideoSettings.WIDTH,
+                ProjectProperties.VideoSettings.HEIGHT,
+                ProjectProperties.VideoSettings.FRAME_RATE
+        );
     }
 
-    public VideoProjectConfig toVideoProjectConfig() {
-        return new VideoProjectConfig(
-                ProjectProperties.OUTPUT_FILE,
-                width,
-                height,
-                frameRate,
-                List.of(
-                        createWelcomeScreen(),
-                        createListOfArticleScreen(),
-                        createThankYouScreen()
+    @Override
+    protected double getIntroDuration() {
+        return durationInSeconds;
+    }
+
+    @Override
+    protected List<SceneElement> getIntroElements() {
+        return List.of(
+                getImageElement(ProjectProperties.Images.WELCOME, durationInSeconds, 0, frameRate, true, true),
+                new TextElement(
+                        "Hot tygodnia",
+                        new ElementPosition(height - 500, width / 2),
+                        durationInSeconds,
+                        0,
+                        20,
+                        new Color(0xB60C20),
+                        frameRate,
+                        new ElementSize(width, 100),
+                        false,
+                        List.of(new ResizeEffect(), new FadeEffect(1, 1, frameRate))
                 )
         );
     }
 
-    private SceneConfig createWelcomeScreen() {
-        int durationInSeconds = 2;
-        return new SceneBuilder()
-                .setBackgroundColor(Color.WHITE)
-                .setTextColor(Color.BLACK)
-                .setWidth(width)
-                .setHeight(height)
-                .setDuration(durationInSeconds)
-                .addElement(getImageElement(ProjectProperties.Images.WELCOME, durationInSeconds, 0, frameRate, true, true))
-//                .addElement(new TextElement("Hot tygodnia", new ElementPosition(height - 300, width / 2), durationInSeconds, 0, 20, new Scalar(128, 128, 128, 128), frameRate, new Size(100, 100)))
-                .build();
-    }
-
-    private SceneConfig createListOfArticleScreen() {
+    @Override
+    protected SceneConfig createListOfArticleScreen() {
         AtomicInteger delay = new AtomicInteger();
         int displayDuration = articles.size();
         Color backgroundColor = Color.WHITE;
@@ -78,7 +68,7 @@ public class TopWeeklyArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setHeight(height)
                 .setBackgroundColor(backgroundColor)
                 .setTextColor(textColor)
-                .setSceneMargin(getSceneMargin())
+                .setSceneMargin(defaultSceneMargin())
                 .addElement(ElementProvider.createEffectElement(width, height, frameRate, displayDuration))
                 .setDuration(displayDuration);
         imageDownloader.downloadImages(articles);
@@ -87,46 +77,4 @@ public class TopWeeklyArticleVideoProjectConfig implements IVideoProjectConfig {
         return sceneBuilder.build();
     }
 
-    public SceneConfig createThankYouScreen() {
-        Set<String> thankYouNames = getUsernameToThankYou(articles);
-        Path filePath = new ThankYouImageGenerator(thankYouNames, width, height).generateThankYouImage();
-
-        return new SceneBuilder()
-                .setBackgroundColor(Color.WHITE)
-                .setTextColor(Color.BLACK)
-                .setWidth(width)
-                .setHeight(height)
-                .addElement(getImageElement(filePath, 2, 0, frameRate, true, false))
-                .addElement(ElementProvider.createSubscribeElement(width, height, frameRate))
-                .setDuration(2)
-                .build();
-    }
-
-    private Set<String> getUsernameToThankYou(List<Article> articles) {
-        return articles.stream()
-                .map(Article::getUserName)
-                .collect(Collectors.toUnmodifiableSet());
-    }
-
-    private SceneMargin getSceneMargin() {
-        return SceneMargin.builder()
-                .top(ProjectProperties.Margins.TOP)
-                .right(ProjectProperties.Margins.RIGHT)
-                .bottom(ProjectProperties.Margins.BOTTOM)
-                .left(ProjectProperties.Margins.LEFT)
-                .build();
-    }
-
-    private ImageElement getImageElement(Path path, int durationInSeconds, int delay, int fps, boolean keepAfterEnd, boolean considerMargins) {
-        return new ImageElement(
-                path,
-                new ElementPosition(height / 2, width / 2),
-                durationInSeconds,
-                delay,
-                fps,
-                keepAfterEnd,
-                new ElementSize(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM),
-                considerMargins
-        );
-    }
 }
