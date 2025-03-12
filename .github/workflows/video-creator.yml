@@ -102,4 +102,4 @@ jobs:
           ignore_cert: true
           convert_markdown: true
           priority: low
-          from: Github
+          from: ${{secrets.MAIL_FROM}}
