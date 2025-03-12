@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       video_type:
-        description: 'Video type (lastAdded, topWeek, topMonth, todayFinish)'
+        description: 'Video type (lastAdded, topWeekly, topMonthly, endingToday)'
         required: true
         default: 'lastAdded'
 
@@ -59,13 +59,13 @@ jobs:
             echo "LAST_DAY_OF_MONTH=$LAST_DAY_OF_MONTH"
           
             if [ "$CURRENT_HOUR" = "07" ]; then
-              VIDEO_TYPE="todayFinish"
+              VIDEO_TYPE="endingToday"
             elif [ "$CURRENT_HOUR" = "17" ] && [ "$CURRENT_DAY" = "5" ]; then
-              VIDEO_TYPE="topWeek"
+              VIDEO_TYPE="topWeekly"
             elif [ "$CURRENT_HOUR" = "20" ]; then
               VIDEO_TYPE="lastAdded"
             elif [ "$CURRENT_DATE" = "$LAST_DAY_OF_MONTH" ]; then
-              VIDEO_TYPE="topMonth"
+              VIDEO_TYPE="topMonthly"
             else
               echo "No matching schedule, exiting."
               exit 1

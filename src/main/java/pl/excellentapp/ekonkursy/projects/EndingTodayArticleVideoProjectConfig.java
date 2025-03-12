@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
+public class EndingTodayArticleVideoProjectConfig implements IVideoProjectConfig {
 
     private final ArticleImageDownloader imageDownloader;
     private final ImageProcessor imageProcessor;
@@ -32,10 +32,10 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
     private final int height;
     private final int frameRate;
 
-    public TopOfWeekArticleVideoProjectConfig(ArticleImageDownloader imageDownloader, ImageProcessor imageProcessor, ArticleFetcher articleFetcher) {
+    public EndingTodayArticleVideoProjectConfig(ArticleImageDownloader imageDownloader, ImageProcessor imageProcessor, ArticleFetcher articleFetcher) {
         this.imageDownloader = imageDownloader;
         this.imageProcessor = imageProcessor;
-        this.articles = articleFetcher.top("week");
+        this.articles = articleFetcher.end();
         this.width = ProjectProperties.VideoSettings.WIDTH;
         this.height = ProjectProperties.VideoSettings.HEIGHT;
         this.frameRate = ProjectProperties.VideoSettings.FRAME_RATE;
@@ -63,8 +63,7 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setWidth(width)
                 .setHeight(height)
                 .setDuration(durationInSeconds)
-                .addElement(getImageElement(ProjectProperties.Images.WELCOME, durationInSeconds, 0, frameRate, true, true))
-//                .addElement(new TextElement("Hot tygodnia", new ElementPosition(height - 300, width / 2), durationInSeconds, 0, 20, new Scalar(128, 128, 128, 128), frameRate, new Size(100, 100)))
+                .addElement(ElementProvider.createLasChanceElement(width, height, frameRate, durationInSeconds))
                 .build();
     }
 
@@ -79,11 +78,11 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setBackgroundColor(backgroundColor)
                 .setTextColor(textColor)
                 .setSceneMargin(getSceneMargin())
-                .addElement(ElementProvider.createEffectElement(width, height, frameRate, displayDuration))
+                .addElement(ElementProvider.createFluidGradientElement(width, height, frameRate, displayDuration))
                 .setDuration(displayDuration);
         imageDownloader.downloadImages(articles);
         articles.forEach(article -> imageProcessor.applyBackground(article.getImageFile().toPath(), backgroundColor));
-        articles.forEach(article -> sceneBuilder.addElement(getImageElement(article.getImageFile().toPath(), 1, delay.getAndIncrement(), frameRate, false, true)));
+        articles.forEach(article -> sceneBuilder.addElement(getImageElement(article.getImageFile().toPath(), 1, delay.getAndIncrement(), frameRate, false)));
         return sceneBuilder.build();
     }
 
@@ -96,7 +95,7 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .setTextColor(Color.BLACK)
                 .setWidth(width)
                 .setHeight(height)
-                .addElement(getImageElement(filePath, 2, 0, frameRate, true, false))
+                .addElement(getImageElement(filePath, 2, 0, frameRate, true))
                 .addElement(ElementProvider.createSubscribeElement(width, height, frameRate))
                 .setDuration(2)
                 .build();
@@ -117,16 +116,16 @@ public class TopOfWeekArticleVideoProjectConfig implements IVideoProjectConfig {
                 .build();
     }
 
-    private ImageElement getImageElement(Path path, int durationInSeconds, int delay, int fps, boolean keepAfterEnd, boolean considerMargins) {
+    private ImageElement getImageElement(Path filePath, int durationInSeconds, int delay, int fps, boolean keepAfterEnd) {
         return new ImageElement(
-                path,
+                filePath,
                 new ElementPosition(height / 2, width / 2),
                 durationInSeconds,
                 delay,
                 fps,
                 keepAfterEnd,
                 new ElementSize(width - ProjectProperties.Margins.LEFT - ProjectProperties.Margins.RIGHT, height - ProjectProperties.Margins.TOP - ProjectProperties.Margins.BOTTOM),
-                considerMargins
+                true
         );
     }
 }

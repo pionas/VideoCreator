@@ -18,6 +18,7 @@ public class VideoCreator {
 
     public static void main(String[] args) {
         String videoType = (args.length > 1) ? args[1] : args[0];
+        String outputPath = "./movie.mp4";
         VideoProjectLoader videoProjectLoader = new VideoProjectLoader(
                 getArticleImageDownloader(),
                 getImageProcessor(),
@@ -26,8 +27,12 @@ public class VideoCreator {
         );
 
         VideoProjectConfig videoProjectConfig = videoProjectLoader.loadProject(videoType).toVideoProjectConfig();
-        SceneRenderer sceneRenderer = new SceneRenderer(videoProjectConfig.getFrameRate(), videoProjectConfig.getWidth(), videoProjectConfig.getHeight());
-        sceneRenderer.renderScenes(videoProjectConfig.getSceneConfigs(), "./movie.mp4");
+        SceneRenderer sceneRenderer = new SceneRenderer(
+                videoProjectConfig.getFrameRate(),
+                videoProjectConfig.getWidth(),
+                videoProjectConfig.getHeight()
+        );
+        sceneRenderer.renderScenes(videoProjectConfig.getSceneConfigs(), outputPath);
         new DirectoryCleaner().clean();
     }
 
