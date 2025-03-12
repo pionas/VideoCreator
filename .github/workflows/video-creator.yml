@@ -52,7 +52,12 @@ jobs:
             CURRENT_DAY=$(date +'%u')
             CURRENT_DATE=$(date +'%d')
             LAST_DAY_OF_MONTH=$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)
-
+          
+            echo "CURRENT_HOUR=$CURRENT_HOUR"
+            echo "CURRENT_DAY=$CURRENT_DAY"
+            echo "CURRENT_DATE=$CURRENT_DATE"
+            echo "LAST_DAY_OF_MONTH=$LAST_DAY_OF_MONTH"
+          
             if [ "$CURRENT_HOUR" = "07" ]; then
               VIDEO_TYPE="todayFinish"
             elif [ "$CURRENT_HOUR" = "17" ] && [ "$CURRENT_DAY" = "5" ]; then
