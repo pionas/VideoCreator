@@ -58,11 +58,11 @@ jobs:
             echo "CURRENT_DATE=$CURRENT_DATE"
             echo "LAST_DAY_OF_MONTH=$LAST_DAY_OF_MONTH"
           
-            if [ "$CURRENT_HOUR" = "07" ]; then
+            if [ "$CURRENT_HOUR" = "06" ]; then
               VIDEO_TYPE="endingToday"
-            elif [ "$CURRENT_HOUR" = "17" ] && [ "$CURRENT_DAY" = "5" ]; then
+            elif [ "$CURRENT_HOUR" = "16" ] && [ "$CURRENT_DAY" = "5" ]; then
               VIDEO_TYPE="topWeekly"
-            elif [ "$CURRENT_HOUR" = "20" ]; then
+            elif [ "$CURRENT_HOUR" = "19" ]; then
               VIDEO_TYPE="lastAdded"
             elif [ "$CURRENT_DATE" = "$LAST_DAY_OF_MONTH" ]; then
               VIDEO_TYPE="topMonthly"
@@ -105,6 +105,6 @@ jobs:
           body: https://github.com/pionas/VideoCreator/raw/refs/heads/main/output/${{ env.FILENAME }}
           cc: ${{secrets.MAIL_COPY_RECIPIENTS}}
           ignore_cert: true
-          convert_markdown: true
+          convert_markdown: false
           priority: low
           from: ${{secrets.MAIL_FROM}}
