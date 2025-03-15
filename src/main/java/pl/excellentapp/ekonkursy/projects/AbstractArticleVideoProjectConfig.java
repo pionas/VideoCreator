@@ -5,6 +5,7 @@ import pl.excellentapp.ekonkursy.article.service.ArticleImageDownloader;
 import pl.excellentapp.ekonkursy.config.IVideoProjectConfig;
 import pl.excellentapp.ekonkursy.config.ProjectProperties;
 import pl.excellentapp.ekonkursy.config.VideoProjectConfig;
+import pl.excellentapp.ekonkursy.core.exception.NoArticlesException;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.image.ThankYouImageGenerator;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
@@ -38,6 +39,9 @@ public abstract class AbstractArticleVideoProjectConfig implements IVideoProject
         this.width = width;
         this.height = height;
         this.frameRate = frameRate;
+        if (articles.isEmpty()) {
+            throw new NoArticlesException();
+        }
     }
 
     public VideoProjectConfig toVideoProjectConfig() {
