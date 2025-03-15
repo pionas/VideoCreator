@@ -80,7 +80,17 @@ jobs:
           echo "Running VideoCreator with VIDEO_TYPE=${{ env.VIDEO_TYPE }}"
           java -jar target/*.jar ${{ env.VIDEO_TYPE }}
 
+      - name: Check if Video Exists
+        id: check_video
+        run: |
+          if [ -f "./movie.mp4" ]; then
+            echo "VIDEO_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "VIDEO_EXISTS=false" >> $GITHUB_ENV
+          fi
+
       - name: Rename and Move Video
+        if: env.VIDEO_EXISTS == 'true'
         run: |
           TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
           FILENAME="${VIDEO_TYPE}_${TIMESTAMP}.mp4"
@@ -88,6 +98,7 @@ jobs:
           echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
       - uses: EndBug/add-and-commit@v9
+        if: env.VIDEO_EXISTS == 'true'
         with:
           add: ./output/${{ env.FILENAME }}
           message: 'Add video: ${{ env.FILENAME }}'
