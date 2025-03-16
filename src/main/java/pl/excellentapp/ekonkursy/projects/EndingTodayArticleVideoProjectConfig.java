@@ -6,7 +6,10 @@ import pl.excellentapp.ekonkursy.config.ProjectProperties;
 import pl.excellentapp.ekonkursy.image.ImageProcessor;
 import pl.excellentapp.ekonkursy.scene.SceneConfig;
 import pl.excellentapp.ekonkursy.scene.builder.SceneBuilder;
+import pl.excellentapp.ekonkursy.scene.elements.ElementPosition;
 import pl.excellentapp.ekonkursy.scene.elements.ElementProvider;
+import pl.excellentapp.ekonkursy.scene.elements.ElementSize;
+import pl.excellentapp.ekonkursy.scene.elements.ImageElement;
 import pl.excellentapp.ekonkursy.scene.elements.SceneElement;
 
 import java.awt.Color;
@@ -36,7 +39,17 @@ public class EndingTodayArticleVideoProjectConfig extends AbstractArticleVideoPr
     @Override
     protected List<SceneElement> getIntroElements() {
         return List.of(
-                ElementProvider.createLastChanceElement(width, height, frameRate, (int) durationInSeconds)
+                ElementProvider.createLastChanceElement(width, height, frameRate, (int) durationInSeconds),
+                new ImageElement(
+                        ProjectProperties.Images.WELCOME_ENDING_TODAY,
+                        new ElementPosition(height / 2, width / 2),
+                        1 / 30.0,
+                        0,
+                        frameRate,
+                        false,
+                        new ElementSize(width , height),
+                        false
+                )
         );
     }
 

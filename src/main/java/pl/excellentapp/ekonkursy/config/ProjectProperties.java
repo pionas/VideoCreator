@@ -29,6 +29,8 @@ public final class ProjectProperties {
     public static final class Images {
 
         public static final Path WELCOME = Path.of("./images/e-KonkursyInfo.jpg");
+        public static final Path WELCOME_ENDING_TODAY = Path.of("./images/welcome-ending-today.png");
+        public static final Path WELCOME_LAST_ADDED = Path.of("./images/welcome-last-added.png");
     }
 
     public static final class VideoSettings {
