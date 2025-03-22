@@ -21,6 +21,7 @@ public final class ProjectProperties {
         public static final Path WOMENS_DAY = Path.of("./movies/womens-day.mp4");
         public static final Path FLUID_GRADIENT = Path.of("./movies/fluid-gradient.mp4");
         public static final Path LAST_CHANCE = Path.of("./movies/last-chance.mp4");
+        public static final Path LAST_CHANCE_2 = Path.of("./movies/last-chance2.mp4");
         public static final Path EFFECT = Path.of("./movies/effect.mp4");
         public static final Path INTRO_NOW_OPEN = Path.of("./movies/intro-now-open.mp4");
         public static final Path BACKGROUND_STARS = Path.of("./movies/background-stars.mp4");
@@ -31,6 +32,7 @@ public final class ProjectProperties {
         public static final Path WELCOME = Path.of("./images/e-KonkursyInfo.jpg");
         public static final Path WELCOME_ENDING_TODAY = Path.of("./images/welcome-ending-today.png");
         public static final Path WELCOME_LAST_ADDED = Path.of("./images/welcome-last-added.png");
+        public static final Path LAST_CHANCE_2 = Path.of("./images/welcome-last-chance.png");
     }
 
     public static final class VideoSettings {

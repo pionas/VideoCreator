@@ -14,11 +14,13 @@ import pl.excellentapp.ekonkursy.scene.elements.SceneElement;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EndingTodayArticleVideoProjectConfig extends AbstractArticleVideoProjectConfig {
 
     private final double durationInSeconds = 2.0;
+    private static final Random RANDOM = new Random();
 
     public EndingTodayArticleVideoProjectConfig(ArticleImageDownloader imageDownloader, ImageProcessor imageProcessor, ArticleFetcher articleFetcher) {
         super(
@@ -38,6 +40,21 @@ public class EndingTodayArticleVideoProjectConfig extends AbstractArticleVideoPr
 
     @Override
     protected List<SceneElement> getIntroElements() {
+        if (RANDOM.nextBoolean()) {
+            return List.of(
+                    ElementProvider.createLastChanceElement2(width, height),
+                    new ImageElement(
+                            ProjectProperties.Images.LAST_CHANCE_2,
+                            new ElementPosition(height / 2, width / 2),
+                            1 / 30.0,
+                            0,
+                            frameRate,
+                            false,
+                            new ElementSize(width, height),
+                            false
+                    )
+            );
+        }
         return List.of(
                 ElementProvider.createLastChanceElement(width, height, frameRate, (int) durationInSeconds),
                 new ImageElement(
@@ -47,7 +64,7 @@ public class EndingTodayArticleVideoProjectConfig extends AbstractArticleVideoPr
                         0,
                         frameRate,
                         false,
-                        new ElementSize(width , height),
+                        new ElementSize(width, height),
                         false
                 )
         );
@@ -59,13 +76,14 @@ public class EndingTodayArticleVideoProjectConfig extends AbstractArticleVideoPr
         int displayDuration = articles.size();
         Color backgroundColor = Color.WHITE;
         Color textColor = Color.BLACK;
+        SceneElement sceneElement = (RANDOM.nextBoolean()) ? ElementProvider.createFluidGradientElement(width, height, frameRate, displayDuration) : ElementProvider.createEffectElement(width, height, frameRate, displayDuration);
         SceneBuilder sceneBuilder = new SceneBuilder()
                 .setWidth(width)
                 .setHeight(height)
                 .setBackgroundColor(backgroundColor)
                 .setTextColor(textColor)
                 .setSceneMargin(defaultSceneMargin())
-                .addElement(ElementProvider.createFluidGradientElement(width, height, frameRate, displayDuration))
+                .addElement(sceneElement)
                 .setDuration(displayDuration);
         imageDownloader.downloadImages(articles);
         articles.forEach(article -> imageProcessor.applyBackground(article.getImageFile().toPath(), backgroundColor));

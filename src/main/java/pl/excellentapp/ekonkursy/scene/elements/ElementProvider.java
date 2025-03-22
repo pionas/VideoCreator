@@ -88,6 +88,20 @@ public class ElementProvider {
         );
     }
 
+    public static SceneElement createLastChanceElement2(int width, int height) {
+        return new VideoElement(
+                ProjectProperties.Videos.LAST_CHANCE_2,
+                new ElementPosition(height / 2, width / 2),
+                3,
+                0,
+                30,
+                false,
+                true,
+                new ElementSize(width, height),
+                false
+        );
+    }
+
     public static SceneElement createIntroLastAddedElement(int width, int height, int frameRate) {
         return new VideoElement(
                 ProjectProperties.Videos.INTRO_NOW_OPEN,
