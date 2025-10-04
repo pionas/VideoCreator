@@ -119,3 +119,9 @@ jobs:
           convert_markdown: false
           priority: low
           from: ${{secrets.MAIL_FROM}}
+
+      - name: Send POST request
+        run: |
+          curl -X POST "${{ secrets.POST_ENDPOINT }}" \
+            -H "Content-Type: text/plain" \
+            -d "https://github.com/pionas/VideoCreator/raw/refs/heads/main/output/${{ env.FILENAME }}"
