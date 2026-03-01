@@ -104,6 +104,9 @@ jobs:
           mv ./movie.mp4 ./output/$FILENAME
           echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
+      - name: Remove old videos
+        run: find ./output -name "*.mp4" -type f -mtime +14 -delete
+
       - uses: EndBug/add-and-commit@v9
         if: env.SHOULD_RUN == 'true' && env.VIDEO_EXISTS == 'true'
         with:
