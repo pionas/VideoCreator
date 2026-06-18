@@ -49,34 +49,40 @@ jobs:
             echo "VIDEO_TYPE=${{ github.event.inputs.video_type }}" >> $GITHUB_ENV
             echo "SHOULD_RUN=true" >> $GITHUB_ENV
           else
-            CURRENT_HOUR=$(date +'%H')
-            CURRENT_DAY=$(date +'%u')
-            CURRENT_DATE=$(date +'%d')
-            LAST_DAY_OF_MONTH=$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)
+            SCHEDULE="${{ github.event.schedule }}"
+            echo "SCHEDULE=$SCHEDULE"
 
-            echo "CURRENT_HOUR=$CURRENT_HOUR"
-            echo "CURRENT_DAY=$CURRENT_DAY"
-            echo "CURRENT_DATE=$CURRENT_DATE"
-            echo "LAST_DAY_OF_MONTH=$LAST_DAY_OF_MONTH"
+            case "$SCHEDULE" in
+              "0 6 * * *")
+                VIDEO_TYPE="endingToday"
+                ;;
+              "0 16 * * 5")
+                VIDEO_TYPE="topWeekly"
+                ;;
+              "0 19 * * *")
+                VIDEO_TYPE="lastAdded"
+                ;;
+              "0 20 28-31 * *")
+                CURRENT_DATE=$(date +'%d')
+                LAST_DAY_OF_MONTH=$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)
+                echo "CURRENT_DATE=$CURRENT_DATE, LAST_DAY_OF_MONTH=$LAST_DAY_OF_MONTH"
+                if [ "$CURRENT_DATE" = "$LAST_DAY_OF_MONTH" ]; then
+                  VIDEO_TYPE="topMonthly"
+                else
+                  echo "Not the last day of month, skipping."
+                  echo "SHOULD_RUN=false" >> $GITHUB_ENV
+                  exit 0
+                fi
+                ;;
+              *)
+                echo "No matching schedule ($SCHEDULE), skipping workflow."
+                echo "SHOULD_RUN=false" >> $GITHUB_ENV
+                exit 0
+                ;;
+            esac
 
-            if [ "$CURRENT_HOUR" = "06" ]; then
-              VIDEO_TYPE="endingToday"
-            elif [ "$CURRENT_HOUR" = "16" ] && [ "$CURRENT_DAY" = "5" ]; then
-              VIDEO_TYPE="topWeekly"
-            elif [ "$CURRENT_HOUR" = "19" ]; then
-              VIDEO_TYPE="lastAdded"
-            elif [ "$CURRENT_DATE" = "$LAST_DAY_OF_MONTH" ]; then
-              VIDEO_TYPE="topMonthly"
-            else
-              echo "No matching schedule, skipping workflow."
-              echo "SHOULD_RUN=false" >> $GITHUB_ENV
-              exit 0
-            fi
-
-            if [ -n "$VIDEO_TYPE" ]; then
-              echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
-              echo "SHOULD_RUN=true" >> $GITHUB_ENV
-            fi
+            echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
+            echo "SHOULD_RUN=true" >> $GITHUB_ENV
           fi
 
       - name: Run VideoCreator
