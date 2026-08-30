@@ -111,7 +111,22 @@ jobs:
           echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
       - name: Remove old videos
-        run: find ./output -name "*.mp4" -type f -mtime +14 -delete
+        if: env.SHOULD_RUN == 'true'
+        run: |
+          CUTOFF=$(date -d '14 days ago' +%Y%m%d)
+          echo "Removing videos older than: $CUTOFF"
+          for file in ./output/*.mp4; do
+            [ -e "$file" ] || continue
+            filename=$(basename "$file")
+            if [[ "$filename" =~ _([0-9]{8})_[0-9]{6}\.mp4$ ]]; then
+              FILE_DATE="${BASH_REMATCH[1]}"
+              echo "$filename -> $FILE_DATE"
+              if [[ "$FILE_DATE" < "$CUTOFF" ]]; then
+                echo "DELETE: $filename"
+                rm "$file"
+              fi
+            fi
+          done
 
       - uses: EndBug/add-and-commit@v9
         if: env.SHOULD_RUN == 'true' && env.VIDEO_EXISTS == 'true'
