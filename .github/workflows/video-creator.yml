@@ -9,10 +9,14 @@ on:
         default: 'lastAdded'
 
   schedule:
-    - cron: '0 6 * * *'
-    - cron: '0 16 * * 5'
-    - cron: '0 19 * * *'
-    - cron: '0 20 28-31 * *'
+    - cron: '7,37 6-9 * * *'       # endingToday 06:00-10:00
+    - cron: '13,43 16-19 * * 5'    # topWeekly   16:00-20:00 (Friday)
+    - cron: '19,49 18-21 * * *'    # lastAdded   18:00-22:00
+    - cron: '27,57 18-21 28-31 * *' # topMonthly 18:00-22:00 (last day of month)
+
+concurrency:
+  group: video-${{ github.event.schedule || github.event.inputs.video_type }}
+  cancel-in-progress: false
 
 jobs:
   generate_video:
@@ -23,24 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
-
-      - name: Cache local Maven repository
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Build project with Maven
-        run: mvn clean package -DskipTests
 
       - name: Determine Video Type
         id: video_type
@@ -53,16 +39,16 @@ jobs:
             echo "SCHEDULE=$SCHEDULE"
 
             case "$SCHEDULE" in
-              "0 6 * * *")
+              "7,37 6-9 * * *")
                 VIDEO_TYPE="endingToday"
                 ;;
-              "0 16 * * 5")
+              "13,43 16-19 * * 5")
                 VIDEO_TYPE="topWeekly"
                 ;;
-              "0 19 * * *")
+              "19,49 18-21 * * *")
                 VIDEO_TYPE="lastAdded"
                 ;;
-              "0 20 28-31 * *")
+              "27,57 18-21 28-31 * *")
                 CURRENT_DATE=$(date +'%d')
                 LAST_DAY_OF_MONTH=$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)
                 echo "CURRENT_DATE=$CURRENT_DATE, LAST_DAY_OF_MONTH=$LAST_DAY_OF_MONTH"
@@ -82,8 +68,37 @@ jobs:
             esac
 
             echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
+
+            TODAY=$(date +'%Y%m%d')
+            if ls ./output/${VIDEO_TYPE}_${TODAY}_*.mp4 >/dev/null 2>&1; then
+              echo "Video $VIDEO_TYPE already generated today ($TODAY), skipping."
+              echo "SHOULD_RUN=false" >> $GITHUB_ENV
+              exit 0
+            fi
+
             echo "SHOULD_RUN=true" >> $GITHUB_ENV
           fi
+
+      - name: Set up JDK 21
+        if: env.SHOULD_RUN == 'true'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Cache local Maven repository
+        if: env.SHOULD_RUN == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build project with Maven
+        if: env.SHOULD_RUN == 'true'
+        run: mvn clean package -DskipTests
 
       - name: Run VideoCreator
         if: env.SHOULD_RUN == 'true'
@@ -132,6 +147,7 @@ jobs:
         if: env.SHOULD_RUN == 'true' && env.VIDEO_EXISTS == 'true'
         with:
           add: ./output/${{ env.FILENAME }}
+          pull: '--rebase --autostash'
           message: 'Add video: ${{ env.FILENAME }}'
 
       - name: Send mail
