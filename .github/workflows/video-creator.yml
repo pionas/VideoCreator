@@ -8,14 +8,8 @@ on:
         required: true
         default: 'lastAdded'
 
-  schedule:
-    - cron: '7,37 6-9 * * *'       # endingToday 06:00-10:00
-    - cron: '13,43 16-19 * * 5'    # topWeekly   16:00-20:00 (Friday)
-    - cron: '19,49 18-21 * * *'    # lastAdded   18:00-22:00
-    - cron: '27,57 18-21 28-31 * *' # topMonthly 18:00-22:00 (last day of month)
-
 concurrency:
-  group: video-${{ github.event.schedule || github.event.inputs.video_type }}
+  group: video-${{ github.event.inputs.video_type }}
   cancel-in-progress: false
 
 jobs:
@@ -31,53 +25,17 @@ jobs:
       - name: Determine Video Type
         id: video_type
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "VIDEO_TYPE=${{ github.event.inputs.video_type }}" >> $GITHUB_ENV
-            echo "SHOULD_RUN=true" >> $GITHUB_ENV
-          else
-            SCHEDULE="${{ github.event.schedule }}"
-            echo "SCHEDULE=$SCHEDULE"
+          VIDEO_TYPE="${{ github.event.inputs.video_type }}"
+          echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
 
-            case "$SCHEDULE" in
-              "7,37 6-9 * * *")
-                VIDEO_TYPE="endingToday"
-                ;;
-              "13,43 16-19 * * 5")
-                VIDEO_TYPE="topWeekly"
-                ;;
-              "19,49 18-21 * * *")
-                VIDEO_TYPE="lastAdded"
-                ;;
-              "27,57 18-21 28-31 * *")
-                CURRENT_DATE=$(date +'%d')
-                LAST_DAY_OF_MONTH=$(date -d "$(date +%Y-%m-01) +1 month -1 day" +%d)
-                echo "CURRENT_DATE=$CURRENT_DATE, LAST_DAY_OF_MONTH=$LAST_DAY_OF_MONTH"
-                if [ "$CURRENT_DATE" = "$LAST_DAY_OF_MONTH" ]; then
-                  VIDEO_TYPE="topMonthly"
-                else
-                  echo "Not the last day of month, skipping."
-                  echo "SHOULD_RUN=false" >> $GITHUB_ENV
-                  exit 0
-                fi
-                ;;
-              *)
-                echo "No matching schedule ($SCHEDULE), skipping workflow."
-                echo "SHOULD_RUN=false" >> $GITHUB_ENV
-                exit 0
-                ;;
-            esac
-
-            echo "VIDEO_TYPE=$VIDEO_TYPE" >> $GITHUB_ENV
-
-            TODAY=$(date +'%Y%m%d')
-            if ls ./output/${VIDEO_TYPE}_${TODAY}_*.mp4 >/dev/null 2>&1; then
-              echo "Video $VIDEO_TYPE already generated today ($TODAY), skipping."
-              echo "SHOULD_RUN=false" >> $GITHUB_ENV
-              exit 0
-            fi
-
-            echo "SHOULD_RUN=true" >> $GITHUB_ENV
+          TODAY=$(date +'%Y%m%d')
+          if ls ./output/${VIDEO_TYPE}_${TODAY}_*.mp4 >/dev/null 2>&1; then
+            echo "Video $VIDEO_TYPE already generated today ($TODAY), skipping."
+            echo "SHOULD_RUN=false" >> $GITHUB_ENV
+            exit 0
           fi
+
+          echo "SHOULD_RUN=true" >> $GITHUB_ENV
 
       - name: Set up JDK 21
         if: env.SHOULD_RUN == 'true'
